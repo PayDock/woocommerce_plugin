@@ -27,21 +27,30 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             // Define user set variables
             $this->enabled                  = $this->settings['enabled'];
             $this->title                    = trim( $this->settings['title'] );
-            $this->description              = trim( $this->get_option( 'description' ) );
             $this->mode                     = $this->settings['sandbox'] == 'yes' ? 'sandbox' : 'production';
+
+            $this->secret_key    = trim( $this->settings['paydock_secret_key'] );
+            $this->public_key    = trim( $this->settings['paydock_public_key'] );
 
             if ( 'sandbox' == $this->mode )    {
                 $this->api_endpoint = "https://api-sandbox.paydock.com/";
-                $this->secret_key       = trim( $this->settings['sandbox_secret_key'] );
-                $this->public_key       = trim( $this->settings['sandbox_public_key'] );
-                $this->gateway_id       = trim( $this->settings['sandbox_gateway_id'] );
             } else {
                 $this->api_endpoint = "https://api.paydock.com/";
-                $this->secret_key    = trim( $this->settings['production_secret_key'] );
-                $this->public_key    = trim( $this->settings['production_public_key'] );
-                $this->gateway_id    = trim( $this->settings['production_gateway_id'] );
             }
 
+            $this->credit_card              = trim( $this->settings['credit_card'] );
+            $this->credit_card_gateway_id   = trim( $this->settings['credit_card_gateway_id'] );
+            $this->credit_card_email        = trim( $this->settings['credit_card_email'] );
+
+            $this->direct_debit             = trim( $this->settings['direct_debit'] );
+            $this->direct_debit_gateway_id  = trim( $this->settings['direct_debit_gateway_id'] );
+
+            $this->paypal_express               = trim( $this->settings['paypal_express'] );
+            $this->paypal_express_gateway_id    = trim( $this->settings['paypal_express_gateway_id'] );
+
+            $this->zip_money                = trim( $this->settings['zip_money'] );
+            $this->zip_money_gateway_id     = trim( $this->settings['zip_money_gateway_id'] );
+            $this->zip_money_tokenization   = trim( $this->settings['zip_money_tokenization'] );
 
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
@@ -72,63 +81,93 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                     'default'     => __( 'PayDock', WOOPAYDOCKTEXTDOMAIN ),
                     'desc_tip'    => true
                 ),
-                'description' => array(
-                    'title'       => __( 'Description', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'textarea',
-                    'description' => __( 'Payment method description that the customer will see on your checkout.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => __( 'Pay securely by Credit through PayDock Secure Servers.', WOOPAYDOCKTEXTDOMAIN ),
-                    'desc_tip'    => true,
-                ),
-                'production_secret_key' => array(
-                    'title'       => __( 'Production Secret Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'production_public_key' => array(
-                    'title'       => __( 'Production Public Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'production_gateway_id' => array(
-                    'title'       => __( 'Production Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'description' => __( 'Obtained from your PayDock account. You can set this ID by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
                 'sandbox' => array(
                     'title'       => __( 'Use Sandbox', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable sandbox mode during testing and development - live payments will not be taken if enabled.', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable sandbox - live payments will not be taken if enabled.', WOOPAYDOCKTEXTDOMAIN ),
                     'type'        => 'checkbox',
                     'description' => '',
                     'default'     => 'no'
                 ),
-                'sandbox_secret_key' => array(
-                    'title'       => __( 'Sandbox Secret Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
+                'paydock_public_key' => array(
+                    'title'       => __( 'PayDock Public Key', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'password',
                     'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
                     'default'     => '',
                     'desc_tip'    => true
                 ),
-                'sandbox_public_key' => array(
-                    'title'       => __( 'Sandbox Public Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
+                'paydock_secret_key' => array(
+                    'title'       => __( 'PayDock Secret Key', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'password',
                     'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
                     'default'     => '',
                     'desc_tip'    => true
                 ),
-                'sandbox_gateway_id' => array(
-                    'title'       => __( 'Sandbox Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
+                'credit_card' => array(
+                    'title'       => __( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
+                'credit_card_gateway_id' => array(
+                    'title'       => __( 'Credit Card Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
                     'type'        => 'text',
-                    'description' => __( 'Obtained from your PayDock account. You can set this ID by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
                     'default'     => '',
                     'desc_tip'    => true
                 ),
-
+                'credit_card_email' => array(
+                    'title'       => __( 'Credit Card Email', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
+                'direct_debit' => array(
+                    'title'       => __( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
+                'direct_debit_gateway_id' => array(
+                    'title'       => __( 'Direct Debit Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'text',
+                    'default'     => '',
+                    'desc_tip'    => true
+                ),
+                'paypal_express' => array(
+                    'title'       => __( 'PayPal Express', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
+                'paypal_express_gateway_id' => array(
+                    'title'       => __( 'PayPal Express Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'text',
+                    'default'     => '',
+                    'desc_tip'    => true
+                ),
+                'zip_money' => array(
+                    'title'       => __( 'Zip Money', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
+                'zip_money_gateway_id' => array(
+                    'title'       => __( 'Zip Money Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'text',
+                    'default'     => '',
+                    'desc_tip'    => true
+                ),
+                'zip_money_tokenization' => array(
+                    'title'       => __( 'Zip Money Tokenization', WOOPAYDOCKTEXTDOMAIN ),
+                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
+                    'type'        => 'checkbox',
+                    'description' => '',
+                    'default'     => 'no'
+                ),
             );
         }
 
