@@ -264,8 +264,12 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          */
         public function direct_debit_form() {
             ?>
-            <p>Praesent nonummy mi in odio. Nullam accumsan lorem in dui. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Nullam accumsan lorem in dui. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.</p>
-            <?php
+            <style>iframe {border: 0;width: 100%;height: 300px;}</style>
+            <form method="Post" action="" id="direct_debit_form">
+                <div id="paydock_dd"></div>
+                <input name="debit_source_token" id="debit_source_token" type="hidden">
+                <input type="submit" value="<?php _e( 'Submit Payment', WOOPAYDOCKTEXTDOMAIN ); ?>">
+            </form>            <?php
         }
 
         /**
@@ -301,6 +305,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             wp_localize_script( 'paydock-token', 'paydock_object', array(
                 'publicKey'         => $this->public_key,
                 'creditGatewayId'   => $this->credit_card_gateway_id,
+                'debitGatewayId'   => $this->direct_debit_gateway_id,
                 'sandbox'           => 'sandbox' == $this->mode ? true : false,
                 'cc_email'          => 'no' == $this->credit_card_email ? 'no' : true,
             ) );
