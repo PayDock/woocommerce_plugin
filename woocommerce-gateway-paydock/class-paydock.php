@@ -52,6 +52,22 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             $this->zip_money_gateway_id     = trim( $this->settings['zip_money_gateway_id'] );
             $this->zip_money_tokenization   = trim( $this->settings['zip_money_tokenization'] );
 
+            if ( $this->credit_card != 'no' ) {
+                $this->gateways['credit_card'] = true;
+            }
+
+            if ( $this->direct_debit != 'no' ) {
+                $this->gateways['direct_debit'] = true;
+            }
+
+            if ( $this->paypal_express != 'no' ) {
+                $this->gateways['paypal_express'] = true;
+            }
+
+            if ( $this->zip_money != 'no' ) {
+                $this->gateways['zip_money'] = true;
+            }
+
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
             add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
@@ -180,28 +196,75 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          */
         function is_available() {
 
-            if ( 'yes' == $this->enabled && in_array( strtoupper( get_woocommerce_currency() ), $this->currency_list )
-                && !empty( $this->secret_key ) && !empty( $this->public_key ) && !empty( $this->gateway_id ) ) {
+            if ( 'yes' == $this->enabled && in_array( strtoupper( get_woocommerce_currency() ), $this->currency_list ) && !empty( $this->secret_key ) && !empty( $this->public_key ) && count( $this->gateways ) > 0 ) {
                 return true;
             }
 
             return false;
         }
 
+        /**
+         * Print gateway tabs in Checkout page
+         */
+        public function tabs() {
+            ?>
+            <div class="paydock">
+                <div class="paydock-tab-wrap">
+                    <!-- active paydock-tab on page load gets checked attribute -->
+                    <?php if ( $this->gateways['credit_card'] ) : ?>
+                        <input type="radio" id="paydock-tab1" name="paydock-tabGroup1" class="paydock-tab" checked>
+                        <label for="paydock-tab1"><?php _e( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ); ?></label>
+                    <?php endif; ?>
+
+                    <?php if ( $this->gateways['direct_debit'] ) : ?>
+                        <input type="radio" id="paydock-tab2" name="paydock-tabGroup1" class="paydock-tab">
+                        <label for="paydock-tab2"><?php _e( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ); ?></label>
+                    <?php endif; ?>
+
+                    <?php if ( $this->gateways['paypal_express'] ) : ?>
+                        <input type="radio" id="paydock-tab3" name="paydock-tabGroup1" class="paydock-tab">
+                        <label for="paydock-tab3">PayPal Express</label>
+                    <?php endif; ?>
+
+                    <?php if ( $this->gateways['credit_card'] ) : ?>
+                        <div class="paydock-tab__content">
+                            <?php $this->form(); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ( $this->gateways['direct_debit'] ) : ?>
+                        <div class="paydock-tab__content">
+                            <?php $this->direct_debit_form(); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ( $this->gateways['paypal_express'] ) : ?>
+                        <div class="paydock-tab__content">
+                            <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Morbi mattis ullamcorper velit. Pellentesque posuere. Etiam ut purus mattis mauris sodales aliquam. Praesent nec nisl a purus blandit viverra.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php
+        }
+
+        /**
+         * Direct Debit Form in Direct Debit tabs
+         */
+        public function direct_debit_form() {
+            ?>
+            <p>Praesent nonummy mi in odio. Nullam accumsan lorem in dui. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Nullam accumsan lorem in dui. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.</p>
+            <?php
+        }
 
         /**
          * Payment form on checkout page
          */
         public function payment_fields() {
             if ( $this->has_fields ) {
-
-                if ( $description = $this->get_description() ) {
-                    echo wpautop( wptexturize( $description ) );
-                }
-
                 $this->supports[] = 'tokenization';
-
-                $this->form();
+                $this->tabs();
+            } else {
             }
         }
 
@@ -216,11 +279,13 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                 return '';
             }
 
+            wp_enqueue_style( 'paydock-tabs', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/css/tabs.css', array(), WOOPAYDOCK_VER );
+
             wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/paydock.min.js', array(), $this->js_ver, true );
             wp_enqueue_script( 'paydock-token', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock_token.js', array('js-paydock'), time(), true );
             wp_localize_script( 'paydock-token', 'paydock', array(
                 'publicKey' => $this->public_key,
-                'gatewayId' => $this->gateway_id,
+                'gatewayId' => $this->credit_card_gateway_id,
                 'sandbox'   => 'sandbox' == $this->mode ? true : false,
             ) );
 
