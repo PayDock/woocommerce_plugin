@@ -89,13 +89,13 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             wp_enqueue_style( 'paydock-tabs', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/css/tabs.css', array(), WOOPAYDOCK_VER );
 
             if ( 'sandbox' == $this->mode ) {
-                wp_enqueue_script( 'js-paydock', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
+                wp_enqueue_script( 'paydock-api', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
             } else {
-                wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
+                wp_enqueue_script( 'paydock-api', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
             }
 
-            wp_enqueue_script( 'paydock-token', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock_token.js', array('js-paydock'), time(), true );
-            wp_localize_script( 'paydock-token', 'paydock_object', array(
+            wp_enqueue_script( 'paydock-js', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock.js', array( 'paydock-api' ), time(), true );
+            wp_localize_script( 'paydock-js', 'paydock_object', array(
                 'gateways' => array(
                     'creditCard'    => $this->credit_card,
                     'directDebit'   => $this->direct_debit,
@@ -159,6 +159,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                         <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
                     <?php endif; ?>
 
+                    <!-- Tabs content -->
                     <?php if ( $this->gateways['credit_card'] ) : ?>
                         <div class="paydock-tab__content">
                             <?php $this->credit_card_form(); ?>
@@ -173,8 +174,6 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     <?php if ( $this->gateways['paypal_express'] ) : ?>
                         <div class="paydock-tab__content">
-                            <input type="hidden" name="pst">
-
                             <ol>
                                 <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                                 <li><?php _e( 'Pay order in modal window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
@@ -182,6 +181,10 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                             </ol>
                         </div>
                     <?php endif; ?>
+
+                    <input type="hidden" name="payment_source">
+
+                    <input type="hidden" name="paydock_gateway">
                 </div>
             </div>
             <?php
@@ -200,8 +203,9 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             <?php endif; ?>
             <script>
                 var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
-                paydock_paypal.onFinishInsert('input[name="pst"]', 'payment_source_token');
+                paydock_paypal.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
                 paydock_paypal.on('finish', function (data) {
+                    jQuery('input[name="paydock_gateway"]').val('paypal_express');
                     jQuery('input[name=woocommerce_checkout_place_order]').submit();
                     console.log('on:finish', data);
                 });
@@ -215,11 +219,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
         public function credit_card_form() {
             ?>
             <style>iframe {border: 0;width: 100%;height: 300px;}</style>
-            <form method="Post" action="" id="credit_card_form">
-                <div id="paydock_cc"></div>
-                <input name="payment_source_token" id="payment_source_token" type="hidden">
-                <input type="submit" value="<?php _e( 'Submit Payment', WOOPAYDOCKTEXTDOMAIN ); ?>">
-            </form>
+            <div id="paydock_cc"></div>
             <?php
         }
 
@@ -229,11 +229,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
         public function direct_debit_form() {
             ?>
             <style>iframe {border: 0;width: 100%;height: 300px;}</style>
-            <form method="Post" action="" id="direct_debit_form">
-                <div id="paydock_dd"></div>
-                <input name="debit_source_token" id="debit_source_token" type="hidden">
-                <input type="submit" value="<?php _e( 'Submit Payment', WOOPAYDOCKTEXTDOMAIN ); ?>">
-            </form>
+            <div id="paydock_dd"></div>
             <?php
         }
 
@@ -296,15 +292,29 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             $item_name = sprintf( __( 'Order %s from %s.', WOOPAYDOCKTEXTDOMAIN ), $order->get_order_number(), urlencode( remove_accents( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) );
 
             try {
-                // PayPal Express Token
-                if( isset( $_POST['pst'] ) ) {
-                    $token = $_POST['pst'];
+                if( isset( $_POST['payment_source'] ) ) {
+                    $token = $_POST['payment_source'];
                 } else {
                     $token = '';
                 }
 
+                switch ( $_POST['paydock_gateway'] ) {
+                    case 'credit_card':
+                        $paydock_gateway = __( '(Credit Card)', WOOPAYDOCKTEXTDOMAIN );
+                        break;
+                    case 'direct_debit':
+                        $paydock_gateway = __( '(Direct Debit)', WOOPAYDOCKTEXTDOMAIN );
+                        break;
+                    case 'paypal_express':
+                        $paydock_gateway = __( '(Paypal Express)', WOOPAYDOCKTEXTDOMAIN );
+                        break;
+                    default:
+                        $paydock_gateway = '';
+                        break;
+                }
+
                 //make sure token is set at this point
-                if ( !isset( $token ) || empty( $token ) ) {
+                if ( empty( $token ) ) {
                     throw new Exception( __( 'The PayDoc Token was not generated correctly. Please go back and try again.', WOOPAYDOCKTEXTDOMAIN ) );
                 }
 
@@ -336,9 +346,8 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     if ( ! empty( $res['resource']['type'] ) && 'charge' == $res['resource']['type'] ) {
                         if ( ! empty( $res['resource']['data']['status'] ) && 'complete' == $res['resource']['data']['status'] ) {
-
+                            $order->set_payment_method_title( sprintf( __( '%s Payment %s', WOOPAYDOCKTEXTDOMAIN ), $this->method_title, $paydock_gateway ) );
                             $order->payment_complete( $res['resource']['data']['_id'] );
-
                             // Remove cart
                             WC()->cart->empty_cart();
 
