@@ -32,7 +32,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             $this->secret_key    = trim( $this->settings['paydock_secret_key'] );
             $this->public_key    = trim( $this->settings['paydock_public_key'] );
 
-            if ( 'sandbox' == $this->mode )    {
+            if ( 'sandbox' == $this->mode ) {
                 $this->api_endpoint = "https://api-sandbox.paydock.com/";
             } else {
                 $this->api_endpoint = "https://api.paydock.com/";
@@ -228,7 +228,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     <?php if ( $this->gateways['credit_card'] ) : ?>
                         <div class="paydock-tab__content">
-                            <?php $this->form(); ?>
+                            <?php $this->credit_card_form(); ?>
                         </div>
                     <?php endif; ?>
 
@@ -248,6 +248,17 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             <?php
         }
 
+        public function credit_card_form() {
+            ?>
+            <style>iframe {border: 0;width: 100%;height: 300px;}</style>
+            <form method="Post" action="" id="credit_card_form">
+                <div id="paydock_cc"></div>
+                <input name="payment_source_token" id="payment_source_token" type="hidden">
+                <input type="submit" value="<?php _e( 'Submit Payment', WOOPAYDOCKTEXTDOMAIN ); ?>">
+            </form>
+            <?php
+        }
+
         /**
          * Direct Debit Form in Direct Debit tabs
          */
@@ -264,7 +275,6 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             if ( $this->has_fields ) {
                 $this->supports[] = 'tokenization';
                 $this->tabs();
-            } else {
             }
         }
 
@@ -281,12 +291,18 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
             wp_enqueue_style( 'paydock-tabs', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/css/tabs.css', array(), WOOPAYDOCK_VER );
 
-            wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/paydock.min.js', array(), $this->js_ver, true );
+            if ( 'sandbox' == $this->mode ) {
+                wp_enqueue_script( 'js-paydock', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
+            } else {
+                wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
+            }
+
             wp_enqueue_script( 'paydock-token', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock_token.js', array('js-paydock'), time(), true );
-            wp_localize_script( 'paydock-token', 'paydock', array(
-                'publicKey' => $this->public_key,
-                'gatewayId' => $this->credit_card_gateway_id,
-                'sandbox'   => 'sandbox' == $this->mode ? true : false,
+            wp_localize_script( 'paydock-token', 'paydock_object', array(
+                'publicKey'         => $this->public_key,
+                'creditGatewayId'   => $this->credit_card_gateway_id,
+                'sandbox'           => 'sandbox' == $this->mode ? true : false,
+                'cc_email'          => 'no' == $this->credit_card_email ? 'no' : true,
             ) );
 
             return '';
