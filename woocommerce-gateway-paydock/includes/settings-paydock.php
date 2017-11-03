@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-return apply_filters( 'wc_stripe_settings', array(
+$settings = array(
     'enabled' => array(
         'title'       => __( 'Enable/Disable', WOOPAYDOCKTEXTDOMAIN ),
         'label'       => __( 'Enable PayDock', WOOPAYDOCKTEXTDOMAIN ),
@@ -105,4 +105,6 @@ return apply_filters( 'wc_stripe_settings', array(
         'description' => '',
         'default'     => 'no'
     ),
-) );
+);
+
+return $settings;

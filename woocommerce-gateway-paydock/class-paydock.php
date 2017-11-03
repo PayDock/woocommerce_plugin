@@ -74,6 +74,21 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
             add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
+
+            add_action( 'admin_enqueue_scripts', array( $this, 'admin_paydock_scripts' ) );
+        }
+
+        /**
+         * admin_paydock_scripts function.
+         *
+         * Outputs scripts used for admin side of WooCommerce panel
+         */
+        public function admin_paydock_scripts( $hook ) {
+            if ( 'woocommerce_page_wc-settings' != $hook ) {
+                return;
+            }
+
+            wp_enqueue_script( 'admin-paydock-js', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/admin-paydock.js', array( 'jquery' ), WOOPAYDOCK_VER );
         }
 
         /**
@@ -118,7 +133,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          * @return void
          */
         function init_form_fields() {
-            $this->form_fields = include('includes/settings-paydock.php');
+            $this->form_fields = include( 'includes/settings-paydock.php' );
         }
 
         /**
@@ -128,8 +143,18 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          * @return bool
          */
         function is_available() {
+            if ( 'yes' == $this->enabled && in_array( strtoupper( get_woocommerce_currency() ), $this->currency_list ) && ! empty( $this->secret_key ) && ! empty( $this->public_key ) ) {
+                return true;
+            }
 
-            if ( 'yes' == $this->enabled && in_array( strtoupper( get_woocommerce_currency() ), $this->currency_list ) && !empty( $this->secret_key ) && !empty( $this->public_key ) && count( $this->gateways ) > 0 ) {
+            return false;
+        }
+
+        /**
+         * Check if Zip Money can be enable with this customer country and WooCommerce currency
+         */
+        function is_zipmoney_available( $country = 'AU' ) {
+            if( get_woocommerce_currency() == 'AUD' && $country == 'AU' ) {
                 return true;
             }
 
@@ -143,6 +168,13 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             ?>
             <div class="paydock">
                 <div class="paydock-tab-wrap">
+                    <!-- Script for checkout widgets -->
+                    <?php if( 'sandbox' == $this->mode ) : ?>
+                        <script src="https://app-sandbox.paydock.com/v1/widget.umd.js"></script>
+                    <?php else : ?>
+                        <script src="https://app.paydock.com/v1/widget.umd.min.js"></script>
+                    <?php endif; ?>
+
                     <!-- active paydock-tab on page load gets checked attribute -->
                     <?php if ( $this->gateways['credit_card'] ) : ?>
                         <input type="radio" id="paydock-tab1" name="paydock-tabGroup1" class="paydock-tab" checked>
@@ -157,6 +189,11 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                     <?php if ( $this->gateways['paypal_express'] ) : ?>
                         <input type="radio" id="paydock-tab3" name="paydock-tabGroup1" class="paydock-tab">
                         <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
+                    <?php endif; ?>
+
+                    <?php if( $this->gateways['zip_money'] && $this->is_zipmoney_available( WC()->cart->get_customer()->get_shipping_country() ) ) : ?>
+                        <input type="radio" id="paydock-tab4" name="paydock-tabGroup1" class="paydock-tab">
+                        <label for="paydock-tab4"><?php $this->zip_money_express_button(); ?></label>
                     <?php endif; ?>
 
                     <!-- Tabs content -->
@@ -182,6 +219,16 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                         </div>
                     <?php endif; ?>
 
+                    <?php if( $this->gateways['zip_money'] ) : ?>
+                        <div class="paydock-tab__content">
+                            <ol>
+                                <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Pay order in modal window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'If payment was successful you will redirect', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                            </ol>
+                        </div>
+                    <?php endif; ?>
+
                     <input type="hidden" name="payment_source">
 
                     <input type="hidden" name="paydock_gateway">
@@ -190,17 +237,81 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             <?php
         }
 
+        /**
+         * ZipMoney Checkout Button for ZipMoney tab
+         */
+        public function zip_money_express_button() {
+            $tokenize = true;
+
+            if ( $this->zip_money_tokenization == 'no' ) {
+                $tokenize = false;
+            }
+
+            $zipmoney_meta = array (
+                'first_name' => WC()->cart->get_customer()->get_first_name(),
+                'tokenize' => $tokenize,
+                'last_name' => WC()->cart->get_customer()->get_last_name(),
+                'email' => WC()->cart->get_customer()->get_email(),
+                'charge' =>
+                    array (
+                        'amount' => WC()->cart->get_cart_contents_total(),
+                        'currency' => get_woocommerce_currency(),
+                        'shipping_address' =>
+                            array (
+                                'first_name' => WC()->cart->get_customer()->get_shipping_first_name(),
+                                'last_name' => WC()->cart->get_customer()->get_shipping_last_name(),
+                                'line1' => WC()->cart->get_customer()->get_shipping_address(),
+                                'line2' => WC()->cart->get_customer()->get_shipping_address_2(),
+                                'country' => WC()->cart->get_customer()->get_shipping_country(),
+                                'postcode' => WC()->cart->get_customer()->get_shipping_postcode(),
+                                'city' => WC()->cart->get_customer()->get_shipping_city(),
+                                'state' => WC()->cart->get_customer()->get_shipping_state(),
+                            ),
+                        'billing_address' =>
+                            array (
+                                'first_name' => WC()->cart->get_customer()->get_billing_first_name(),
+                                'last_name' => WC()->cart->get_customer()->get_billing_last_name(),
+                                'line1' => WC()->cart->get_customer()->get_billing_address(),
+                                'line2' => WC()->cart->get_customer()->get_billing_address_2(),
+                                'country' => WC()->cart->get_customer()->get_billing_country(),
+                                'postcode' => WC()->cart->get_customer()->get_billing_postcode(),
+                                'city' => WC()->cart->get_customer()->get_billing_city(),
+                                'state' => WC()->cart->get_customer()->get_billing_state(),
+                            )
+                    ),
+            );
+
+            $zipmoney_meta = json_encode($zipmoney_meta);
+            ?>
+
+            <button type="button" id="zip-money-button">
+                <img src="<?php echo plugins_url( 'woocommerce-gateway-paydock/assets/images/zipmoney.png' ); ?>" align="left" style="margin-right:7px;">
+            </button>
+            <script>
+                var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton('#zip-money-button', '<?php echo $this->public_key; ?>', '<?php echo $this->zip_money_gateway_id; ?>');
+
+                paydock_zipmoney.setMeta(<?php echo $zipmoney_meta; ?>);
+
+                paydock_zipmoney.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
+
+                paydock_zipmoney.on('finish', function (data) {
+                    jQuery('input[name="paydock_gateway"]').val('zip_money');
+                    jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                    console.log('on:finish', data);
+                });
+            </script>
+            <?php
+        }
+
+        /**
+         * PayPal Checkout Button for Paypal Express tab
+         */
         public function paypal_express_button() {
             ?>
             <button type="button" id="paydock-paypal-express">
                 <img src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="left" style="margin-right:7px;">
             </button>
 
-            <?php if( 'sandbox' == $this->mode ) : ?>
-                <script src="https://app-sandbox.paydock.com/v1/widget.umd.js"></script>
-            <?php else : ?>
-                <script src="https://app.paydock.com/v1/widget.umd.min.js"></script>
-            <?php endif; ?>
             <script>
                 var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
                 paydock_paypal.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
@@ -260,6 +371,15 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                 <?php
             }
 
+            if ( $this->zip_money != 'no' ) { ?>
+                <div class="updated woocommerce-message">
+                    <div class="squeezer">
+                        <h4><?php _e( 'Note: ZipMoney works only with "AUD" currency and for Australian customers.', WOOPAYDOCKTEXTDOMAIN ); ?></h4>
+                    </div>
+                </div>
+                <?php
+            }
+
             if ( ! in_array( strtoupper( get_woocommerce_currency() ), $this->currency_list ) ) { ?>
 
                 <div class="error woocommerce-message">
@@ -308,6 +428,9 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                     case 'paypal_express':
                         $paydock_gateway = __( '(Paypal Express)', WOOPAYDOCKTEXTDOMAIN );
                         break;
+                    case 'zip_money':
+                        $paydock_gateway = __( '(Zip Money)', WOOPAYDOCKTEXTDOMAIN );
+                        break;
                     default:
                         $paydock_gateway = '';
                         break;
@@ -324,7 +447,13 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                     'token'         => $token,
                     'reference'     => $item_name,
                     'description'   => $item_name,
-                ));
+                    'customer'      => array(
+                        'first_name'     => $order->get_billing_first_name(),
+                        'last_name'      => $order->get_billing_last_name(),
+                        'email'          => $order->get_billing_email(),
+                        'phone'          => $order->get_billing_phone(),
+                    ),
+                ) );
 
                 $args = array(
                     'method'        => 'POST',

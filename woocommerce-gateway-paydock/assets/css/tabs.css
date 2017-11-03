@@ -162,3 +162,16 @@ label[for=paydock-tab3] {
     background-color: rgba(0,0,0,0);
     padding: 0;
 }
+
+label[for=paydock-tab4] {
+    padding: 10px 15px 20px;
+}
+
+#zip-money-button {
+    padding: 0;
+    background: rgba(0,0,0,0);
+}
+
+#zip-money-button img {
+    height: 25px;
+}
