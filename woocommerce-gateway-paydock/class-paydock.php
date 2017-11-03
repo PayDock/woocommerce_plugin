@@ -10,7 +10,6 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          * Constructor
          */
         public function __construct() {
-
             $this->currency_list = array( 'AUD', 'USD', 'GBP', 'EUR', 'JPY', 'CAD', 'CHF', 'NZD' );
             $this->js_ver = '1.0.2';
             $this->method_title = 'PayDock';
@@ -68,11 +67,49 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                 $this->gateways['zip_money'] = true;
             }
 
+            if ( $this->enabled ) {
+                $this->order_button_text = __( 'Place order with PayDock', WOOPAYDOCKTEXTDOMAIN );
+            }
+
             add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
             add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
         }
 
+        /**
+         * payment_scripts function.
+         *
+         * Outputs scripts used for simplify payment
+         */
+        public function payment_scripts() {
+            if ( ! is_checkout() || ! $this->is_available() ) {
+                return '';
+            }
+
+            wp_enqueue_style( 'paydock-tabs', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/css/tabs.css', array(), WOOPAYDOCK_VER );
+
+            if ( 'sandbox' == $this->mode ) {
+                wp_enqueue_script( 'js-paydock', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
+            } else {
+                wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
+            }
+
+            wp_enqueue_script( 'paydock-token', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock_token.js', array('js-paydock'), time(), true );
+            wp_localize_script( 'paydock-token', 'paydock_object', array(
+                'gateways' => array(
+                    'creditCard'    => $this->credit_card,
+                    'directDebit'   => $this->direct_debit,
+                ),
+                'publicKey'         => $this->public_key,
+                'creditGatewayId'   => $this->credit_card_gateway_id,
+                'debitGatewayId'    => $this->direct_debit_gateway_id,
+                'paypalGatewayId'   => $this->paypal_express_gateway_id,
+                'sandbox'           => 'sandbox' == $this->mode ? true : false,
+                'cc_email'          => 'no' == $this->credit_card_email ? 'no' : true,
+            ) );
+
+            return '';
+        }
 
         /**
          * init_form_fields function.
@@ -81,112 +118,8 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          * @return void
          */
         function init_form_fields() {
-
-            $this->form_fields = array(
-                'enabled' => array(
-                    'title'       => __( 'Enable/Disable', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable PayDock', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'title' => array(
-                    'title'       => __( 'Title', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'description' => __( 'Payment method title that the customer will see on your website.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => __( 'PayDock', WOOPAYDOCKTEXTDOMAIN ),
-                    'desc_tip'    => true
-                ),
-                'sandbox' => array(
-                    'title'       => __( 'Use Sandbox', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable sandbox - live payments will not be taken if enabled.', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'paydock_public_key' => array(
-                    'title'       => __( 'PayDock Public Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'password',
-                    'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'paydock_secret_key' => array(
-                    'title'       => __( 'PayDock Secret Key', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'password',
-                    'description' => __( 'Obtained from your PayDock account. You can set this key by logging into PayDock.', WOOPAYDOCKTEXTDOMAIN ),
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'credit_card' => array(
-                    'title'       => __( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'credit_card_gateway_id' => array(
-                    'title'       => __( 'Credit Card Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'credit_card_email' => array(
-                    'title'       => __( 'Credit Card Email', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'direct_debit' => array(
-                    'title'       => __( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'direct_debit_gateway_id' => array(
-                    'title'       => __( 'Direct Debit Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'paypal_express' => array(
-                    'title'       => __( 'PayPal Express', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'paypal_express_gateway_id' => array(
-                    'title'       => __( 'PayPal Express Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'zip_money' => array(
-                    'title'       => __( 'Zip Money', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-                'zip_money_gateway_id' => array(
-                    'title'       => __( 'Zip Money Gateway ID', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'text',
-                    'default'     => '',
-                    'desc_tip'    => true
-                ),
-                'zip_money_tokenization' => array(
-                    'title'       => __( 'Zip Money Tokenization', WOOPAYDOCKTEXTDOMAIN ),
-                    'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
-                    'type'        => 'checkbox',
-                    'description' => '',
-                    'default'     => 'no'
-                ),
-            );
+            $this->form_fields = include('includes/settings-paydock.php');
         }
-
 
         /**
          * Check If The Gateway Is Available For Use
@@ -223,7 +156,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     <?php if ( $this->gateways['paypal_express'] ) : ?>
                         <input type="radio" id="paydock-tab3" name="paydock-tabGroup1" class="paydock-tab">
-                        <label for="paydock-tab3">PayPal Express</label>
+                        <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
                     <?php endif; ?>
 
                     <?php if ( $this->gateways['credit_card'] ) : ?>
@@ -240,7 +173,13 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     <?php if ( $this->gateways['paypal_express'] ) : ?>
                         <div class="paydock-tab__content">
-                            <p>In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Morbi mattis ullamcorper velit. Pellentesque posuere. Etiam ut purus mattis mauris sodales aliquam. Praesent nec nisl a purus blandit viverra.</p>
+                            <input type="hidden" name="pst">
+
+                            <ol>
+                                <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Pay order in modal window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'If payment was successful you will redirect', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                            </ol>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -248,6 +187,31 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             <?php
         }
 
+        public function paypal_express_button() {
+            ?>
+            <button type="button" id="paydock-paypal-express">
+                <img src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="left" style="margin-right:7px;">
+            </button>
+
+            <?php if( 'sandbox' == $this->mode ) : ?>
+                <script src="https://app-sandbox.paydock.com/v1/widget.umd.js"></script>
+            <?php else : ?>
+                <script src="https://app.paydock.com/v1/widget.umd.min.js"></script>
+            <?php endif; ?>
+            <script>
+                var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
+                paydock_paypal.onFinishInsert('input[name="pst"]', 'payment_source_token');
+                paydock_paypal.on('finish', function (data) {
+                    jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                    console.log('on:finish', data);
+                });
+            </script>
+            <?php
+        }
+
+        /**
+         * Credit Card Form in Credit Card tabs
+         */
         public function credit_card_form() {
             ?>
             <style>iframe {border: 0;width: 100%;height: 300px;}</style>
@@ -269,7 +233,8 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                 <div id="paydock_dd"></div>
                 <input name="debit_source_token" id="debit_source_token" type="hidden">
                 <input type="submit" value="<?php _e( 'Submit Payment', WOOPAYDOCKTEXTDOMAIN ); ?>">
-            </form>            <?php
+            </form>
+            <?php
         }
 
         /**
@@ -282,43 +247,11 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
             }
         }
 
-
-        /**
-         * payment_scripts function.
-         *
-         * Outputs scripts used for simplify payment
-         */
-        public function payment_scripts() {
-            if ( ! is_checkout() || ! $this->is_available() ) {
-                return '';
-            }
-
-            wp_enqueue_style( 'paydock-tabs', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/css/tabs.css', array(), WOOPAYDOCK_VER );
-
-            if ( 'sandbox' == $this->mode ) {
-                wp_enqueue_script( 'js-paydock', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
-            } else {
-                wp_enqueue_script( 'js-paydock', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
-            }
-
-            wp_enqueue_script( 'paydock-token', WP_PLUGIN_URL . '/woocommerce-gateway-paydock/assets/js/paydock_token.js', array('js-paydock'), time(), true );
-            wp_localize_script( 'paydock-token', 'paydock_object', array(
-                'publicKey'         => $this->public_key,
-                'creditGatewayId'   => $this->credit_card_gateway_id,
-                'debitGatewayId'   => $this->direct_debit_gateway_id,
-                'sandbox'           => 'sandbox' == $this->mode ? true : false,
-                'cc_email'          => 'no' == $this->credit_card_email ? 'no' : true,
-            ) );
-
-            return '';
-        }
-
-
         /**
          * Admin Panel Options
          * - Options for bits like 'title' and availability on a country-by-country basis
          */
-        function admin_options() {
+        public function admin_options() {
 
             if ( 'yes' == $this->enabled && 'sandbox' == $this->mode ) { ?>
 
@@ -356,23 +289,29 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
          *
          * @since 1.0.0
          */
-        function process_payment( $order_id ) {
 
+        public function process_payment( $order_id, $retry = true, $force_customer = false ) {
             $order = wc_get_order( $order_id );
 
             $item_name = sprintf( __( 'Order %s from %s.', WOOPAYDOCKTEXTDOMAIN ), $order->get_order_number(), urlencode( remove_accents( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) );
 
             try {
+                // PayPal Express Token
+                if( isset( $_POST['pst'] ) ) {
+                    $token = $_POST['pst'];
+                } else {
+                    $token = '';
+                }
 
                 //make sure token is set at this point
-                if ( !isset( $_POST['paydockToken'] ) || empty( $_POST['paydockToken'] ) ) {
+                if ( !isset( $token ) || empty( $token ) ) {
                     throw new Exception( __( 'The PayDoc Token was not generated correctly. Please go back and try again.', WOOPAYDOCKTEXTDOMAIN ) );
                 }
 
                 $postfields = json_encode( array(
                     'amount'        => (float)$order->get_total(),
                     'currency'      => strtoupper( get_woocommerce_currency() ),
-                    'token'         => $_POST['paydockToken'],
+                    'token'         => $token,
                     'reference'     => $item_name,
                     'description'   => $item_name,
                 ));
@@ -391,12 +330,12 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                 );
                 $result = wp_remote_post( $this->api_endpoint . 'v1/charges', $args );
 
-                if ( !empty( $result['body'] ) ) {
+                if ( ! empty( $result['body'] ) ) {
 
                     $res= json_decode( $result['body'], true );
 
-                    if ( !empty( $res['resource']['type'] ) && 'charge' == $res['resource']['type'] ) {
-                        if ( !empty( $res['resource']['data']['status'] ) && 'complete' == $res['resource']['data']['status'] ) {
+                    if ( ! empty( $res['resource']['type'] ) && 'charge' == $res['resource']['type'] ) {
+                        if ( ! empty( $res['resource']['data']['status'] ) && 'complete' == $res['resource']['data']['status'] ) {
 
                             $order->payment_complete( $res['resource']['data']['_id'] );
 
@@ -410,7 +349,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                         }
 
-                    } elseif ( !empty( $res['error']['message'] ) ) {
+                    } elseif ( ! empty( $res['error']['message'] ) ) {
 
                         throw new Exception( $res['error']['message'] );
                     }

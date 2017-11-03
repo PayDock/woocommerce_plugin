@@ -29,7 +29,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
     top: 0;
-    z-index: 100;
+    z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
     text-shadow: 0 0 0;
@@ -42,7 +42,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
     top: 0;
-    z-index: 100;
+    z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
     text-shadow: 0 0 0;
@@ -55,7 +55,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
     top: 0;
-    z-index: 100;
+    z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
     text-shadow: 0 0 0;
@@ -68,7 +68,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
     top: 0;
-    z-index: 100;
+    z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
     text-shadow: 0 0 0;
@@ -81,7 +81,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
     top: 0;
-    z-index: 100;
+    z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
     text-shadow: 0 0 0;
@@ -152,4 +152,13 @@
 }
 .paydock > *:not(.paydock-tab-wrap) {
     padding: 0 80px;
+}
+
+label[for=paydock-tab3] {
+    padding: 7px 0 15px;
+}
+
+#paydock-paypal-express {
+    background-color: rgba(0,0,0,0);
+    padding: 0;
 }
