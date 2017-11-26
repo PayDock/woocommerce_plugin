@@ -28,6 +28,8 @@ if(paydock_object.gateways.directDebit == 'yes') {
         paydock_dd.setEnv('sandbox');
     }
 
+    paydock_dd.setFormFields(['account_bsb']);
+
     paydock_dd.onFinishInsert('input[name="payment_source"]', 'payment_source');
 
     paydock_dd.on('finish', function (data) {

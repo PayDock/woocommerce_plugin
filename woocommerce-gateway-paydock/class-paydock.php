@@ -474,7 +474,10 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                     $res= json_decode( $result['body'], true );
 
                     if ( ! empty( $res['resource']['type'] ) && 'charge' == $res['resource']['type'] ) {
-                        if ( ! empty( $res['resource']['data']['status'] ) && 'complete' == $res['resource']['data']['status'] ) {
+
+                        $correct_status = ( 'direct_debit' == $_POST['paydock_gateway'] ) ? 'requested' : 'complete';
+
+                        if ( ! empty( $res['resource']['data']['status'] ) && $correct_status == $res['resource']['data']['status'] ) {
                             $order->set_payment_method_title( sprintf( __( '%s Payment %s', WOOPAYDOCKTEXTDOMAIN ), $this->method_title, $paydock_gateway ) );
                             $order->payment_complete( $res['resource']['data']['_id'] );
                             // Remove cart
