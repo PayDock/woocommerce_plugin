@@ -177,22 +177,22 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                     <!-- active paydock-tab on page load gets checked attribute -->
                     <?php if ( $this->gateways['credit_card'] ) : ?>
-                        <input type="radio" id="paydock-tab1" name="paydock-tabGroup1" class="paydock-tab" checked>
+                        <input type="radio" data-gateway="credit_card" id="paydock-tab1" name="paydock-tabGroup1" class="paydock-tab" checked>
                         <label for="paydock-tab1"><?php _e( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ); ?></label>
                     <?php endif; ?>
 
                     <?php if ( $this->gateways['direct_debit'] ) : ?>
-                        <input type="radio" id="paydock-tab2" name="paydock-tabGroup1" class="paydock-tab">
+                        <input type="radio" data-gateway="direct_debit" id="paydock-tab2" name="paydock-tabGroup1" class="paydock-tab">
                         <label for="paydock-tab2"><?php _e( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ); ?></label>
                     <?php endif; ?>
 
                     <?php if ( $this->gateways['paypal_express'] ) : ?>
-                        <input type="radio" id="paydock-tab3" name="paydock-tabGroup1" class="paydock-tab">
+                        <input type="radio" data-gateway="paypal_express" id="paydock-tab3" name="paydock-tabGroup1" class="paydock-tab">
                         <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
                     <?php endif; ?>
 
                     <?php if( $this->gateways['zip_money'] && $this->is_zipmoney_available( WC()->cart->get_customer()->get_shipping_country() ) ) : ?>
-                        <input type="radio" id="paydock-tab4" name="paydock-tabGroup1" class="paydock-tab">
+                        <input type="radio" data-gateway="zip_money" id="paydock-tab4" name="paydock-tabGroup1" class="paydock-tab">
                         <label for="paydock-tab4"><?php $this->zip_money_express_button(); ?></label>
                     <?php endif; ?>
 
@@ -258,14 +258,14 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
                         'currency' => get_woocommerce_currency(),
                         'shipping_address' =>
                             array (
-                                'first_name' => WC()->cart->get_customer()->get_shipping_first_name(),
-                                'last_name' => WC()->cart->get_customer()->get_shipping_last_name(),
-                                'line1' => WC()->cart->get_customer()->get_shipping_address(),
-                                'line2' => WC()->cart->get_customer()->get_shipping_address_2(),
-                                'country' => WC()->cart->get_customer()->get_shipping_country(),
-                                'postcode' => WC()->cart->get_customer()->get_shipping_postcode(),
-                                'city' => WC()->cart->get_customer()->get_shipping_city(),
-                                'state' => WC()->cart->get_customer()->get_shipping_state(),
+                                'first_name' => ( empty( WC()->cart->get_customer()->get_shipping_first_name() ) ? WC()->cart->get_customer()->get_billing_first_name() : WC()->cart->get_customer()->get_shipping_first_name() ),
+                                'last_name' => ( empty( WC()->cart->get_customer()->get_shipping_last_name() ) ? WC()->cart->get_customer()->get_billing_last_name() : WC()->cart->get_customer()->get_shipping_last_name() ),
+                                'line1' => ( empty( WC()->cart->get_customer()->get_shipping_address() ) ? WC()->cart->get_customer()->get_billing_address() : WC()->cart->get_customer()->get_shipping_address() ),
+                                'line2' => ( empty( WC()->cart->get_customer()->get_shipping_address_2() ) ? WC()->cart->get_customer()->get_billing_address_2() : WC()->cart->get_customer()->get_shipping_address_2() ),
+                                'country' => ( empty( WC()->cart->get_customer()->get_shipping_country() ) ? WC()->cart->get_customer()->get_billing_country() : WC()->cart->get_customer()->get_shipping_country() ),
+                                'postcode' => ( empty( WC()->cart->get_customer()->get_shipping_postcode() ) ? WC()->cart->get_customer()->get_billing_postcode() : WC()->cart->get_customer()->get_shipping_postcode() ),
+                                'city' => ( empty( WC()->cart->get_customer()->get_shipping_city() ) ? WC()->cart->get_customer()->get_billing_city() : WC()->cart->get_customer()->get_shipping_city() ),
+                                'state' => ( empty( WC()->cart->get_customer()->get_shipping_state() ) ? WC()->cart->get_customer()->get_billing_state() : WC()->cart->get_customer()->get_shipping_state() ),
                             ),
                         'billing_address' =>
                             array (
@@ -292,12 +292,22 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                 paydock_zipmoney.setMeta(<?php echo $zipmoney_meta; ?>);
 
+                paydock_zipmoney.on('error',function(data) {
+                    alert('Error! Something went wrong');
+                    // doesn't work
+//                    paydock_zipmoney.close()
+
+                    // work with troubles
+                    jQuery('.checkout-overlay.display').remove();
+                });
+
                 paydock_zipmoney.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
 
-                paydock_zipmoney.on('finish', function (data) {
+                paydock_zipmoney.on('finish', function(data) {
+                    console.log('on:finish', data);
+
                     jQuery('input[name="paydock_gateway"]').val('zip_money');
                     jQuery('input[name=woocommerce_checkout_place_order]').submit();
-                    console.log('on:finish', data);
                 });
             </script>
             <?php
@@ -438,7 +448,7 @@ if ( !class_exists( 'WCPayDockGateway' ) ) {
 
                 //make sure token is set at this point
                 if ( empty( $token ) ) {
-                    throw new Exception( __( 'The PayDoc Token was not generated correctly. Please go back and try again.', WOOPAYDOCKTEXTDOMAIN ) );
+                    throw new Exception( __( 'The PayDock Token was not generated correctly. Please go back and try again.', WOOPAYDOCKTEXTDOMAIN ) );
                 }
 
                 $postfields = json_encode( array(

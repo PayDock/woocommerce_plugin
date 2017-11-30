@@ -13,7 +13,7 @@ jQuery(document).ready(function(){
         }
     }
 
-    jQuery('input[type=checkbox]').change(function(){
+    jQuery('.gateway-checkbox').change(function(){
         if(limit_checked_gateways()) {
             woocommerce_save_button.prop('disabled', true);
             submit_block.append('<b style="color:#ff0000;" class="warning">Sorry, you can select maximum 3 payment methods at the same time.</b>')

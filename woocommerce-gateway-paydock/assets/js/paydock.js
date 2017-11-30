@@ -1,3 +1,31 @@
+jQuery('body').on('click', '#place_order', function (e) {
+    if ( jQuery('.woocommerce-checkout').find('#payment_method_paydock').attr('checked') == 'checked' ) {
+        e.preventDefault();
+
+        jQuery('html, body').animate({
+            scrollTop: jQuery(".paydock-tab-wrap").offset().top
+        }, 500);
+
+        var gateway = jQuery(".paydock-tab:checked").data('gateway');
+
+        switch (gateway) {
+            case 'credit_card':
+                paydock_cc.trigger('submit_form');
+                break;
+            case 'direct_debit':
+                paydock_dd.trigger('submit_form');
+                break;
+            case 'paypal_express':
+                jQuery('#paydock-paypal-express').trigger('click');
+                break;
+            case 'zip_money':
+                jQuery('#zip-money-button').trigger('click');
+                break;
+            default: return '';
+        }
+    }
+});
+
 if(paydock_object.gateways.creditCard == 'yes') {
     // Paydock Credit Card gateway
     var paydock_cc = new paydock.HtmlWidget('#paydock_cc', paydock_object.publicKey, paydock_object.creditGatewayId);

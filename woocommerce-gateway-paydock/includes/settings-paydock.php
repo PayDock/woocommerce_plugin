@@ -43,6 +43,7 @@ $settings = array(
         'title'       => __( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ),
         'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
         'type'        => 'checkbox',
+        'class'       => 'gateway-checkbox',
         'description' => '',
         'default'     => 'no'
     ),
@@ -63,6 +64,7 @@ $settings = array(
         'title'       => __( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ),
         'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
         'type'        => 'checkbox',
+        'class'       => 'gateway-checkbox',
         'description' => '',
         'default'     => 'no'
     ),
@@ -76,6 +78,7 @@ $settings = array(
         'title'       => __( 'PayPal Express', WOOPAYDOCKTEXTDOMAIN ),
         'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
         'type'        => 'checkbox',
+        'class'       => 'gateway-checkbox',
         'description' => '',
         'default'     => 'no'
     ),
@@ -89,6 +92,7 @@ $settings = array(
         'title'       => __( 'Zip Money', WOOPAYDOCKTEXTDOMAIN ),
         'label'       => __( 'Enable', WOOPAYDOCKTEXTDOMAIN ),
         'type'        => 'checkbox',
+        'class'       => 'gateway-checkbox',
         'description' => '',
         'default'     => 'no'
     ),
