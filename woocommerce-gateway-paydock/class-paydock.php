@@ -258,7 +258,6 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                 <img src="<?php echo plugins_url( 'woocommerce-gateway-paydock/assets/images/zipmoney.png' ); ?>"
                      align="left" style="margin-right:7px;">
             </button>
-            <span id="zip-money-span"></span>
             <script>
                 // woocommerce checkout form fields
                 var billing_first_name = '#billing_first_name',
@@ -271,123 +270,65 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     billing_city = '#billing_city',
                     billing_state = '#billing_state';
 
-                // zipmoney_meta - json object
-                var zipmoney_meta = {
-                    "tokenize":false,
-                    "first_name":jQuery(billing_first_name).val(),
-                    "last_name":jQuery(billing_last_name).val(),
-                    "email":jQuery(billing_email).val(),
-                    "charge": {
-                        "amount": "<?php echo WC()->cart->get_cart_contents_total(); ?>",
-                        "currency": "<?php echo get_woocommerce_currency(); ?>",
-                        "shipping_address":{
-                            "first_name":jQuery(billing_first_name).val(),
-                            "last_name":jQuery(billing_last_name).val(),
-                            "line1":jQuery(billing_address_1).val(),
-                            "line2":jQuery(billing_address_2).val(),
-                            "country":jQuery(billing_country).val(),
-                            "postcode":jQuery(billing_postcode).val(),
-                            "city":jQuery(billing_city).val(),
-                            "state":jQuery(billing_state).val()
-                        },
-                        "billing_address":{
-                            "first_name":jQuery(billing_first_name).val(),
-                            "last_name":jQuery(billing_last_name).val(),
-                            "line1":jQuery(billing_address_1).val(),
-                            "line2":jQuery(billing_address_2).val(),
-                            "country":jQuery(billing_country).val(),
-                            "postcode":jQuery(billing_postcode).val(),
-                            "city":jQuery(billing_city).val(),
-                            "state":jQuery(billing_state).val()
+                var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton('#zip-money-button', '<?php echo $this->public_key; ?>', '<?php echo $this->zip_money_gateway_id; ?>');
+
+                paydock_zipmoney.on('click', function(){
+                    jQuery("#paydock-tab4").trigger("click");
+
+                    var zipmoney_meta = {
+                        "tokenize":false,
+                        "first_name":jQuery(billing_first_name).val(),
+                        "last_name":jQuery(billing_last_name).val(),
+                        "email":jQuery(billing_email).val(),
+                        "charge": {
+                            "amount": "<?php echo WC()->cart->get_cart_contents_total(); ?>",
+                            "currency": "<?php echo get_woocommerce_currency(); ?>",
+                            "shipping_address":{
+                                "first_name":jQuery(billing_first_name).val(),
+                                "last_name":jQuery(billing_last_name).val(),
+                                "line1":jQuery(billing_address_1).val(),
+                                "line2":jQuery(billing_address_2).val(),
+                                "country":jQuery(billing_country).val(),
+                                "postcode":jQuery(billing_postcode).val(),
+                                "city":jQuery(billing_city).val(),
+                                "state":jQuery(billing_state).val()
+                            },
+                            "billing_address":{
+                                "first_name":jQuery(billing_first_name).val(),
+                                "last_name":jQuery(billing_last_name).val(),
+                                "line1":jQuery(billing_address_1).val(),
+                                "line2":jQuery(billing_address_2).val(),
+                                "country":jQuery(billing_country).val(),
+                                "postcode":jQuery(billing_postcode).val(),
+                                "city":jQuery(billing_city).val(),
+                                "state":jQuery(billing_state).val()
+                            }
                         }
-                    }
-
-                };
-
-                // set email
-                jQuery(billing_email).change(function () {
-                    zipmoney_meta.email = jQuery(billing_email).val();
-                });
-
-                // set first name
-                jQuery(billing_first_name).change(function () {
-                    zipmoney_meta.first_name = jQuery(billing_first_name).val();
-                    zipmoney_meta.charge.billing_address.first_name = jQuery(billing_first_name).val();
-                    zipmoney_meta.charge.shipping_address.first_name = jQuery(billing_first_name).val();
-                });
-
-                // set last name
-                jQuery(billing_last_name).change(function () {
-                    zipmoney_meta.last_name = jQuery(billing_last_name).val();
-                    zipmoney_meta.charge.billing_address.last_name = jQuery(billing_last_name).val();
-                    zipmoney_meta.charge.shipping_address.last_name = jQuery(billing_last_name).val();
-                });
-
-                // set address line 1
-                jQuery(billing_address_1).change(function () {
-                    zipmoney_meta.charge.billing_address.line1 = jQuery(billing_address_1).val();
-                    zipmoney_meta.charge.shipping_address.line1 = jQuery(billing_address_1).val();
-                });
-
-                // set address line 2
-                jQuery(billing_address_2).change(function () {
-                    zipmoney_meta.charge.billing_address.line2 = jQuery(billing_address_2).val();
-                    zipmoney_meta.charge.shipping_address.line2 = jQuery(billing_address_2).val();
-                });
-
-                // set postcode
-                jQuery(billing_postcode).change(function () {
-                    zipmoney_meta.charge.billing_address.postcode = jQuery(billing_postcode).val();
-                    zipmoney_meta.charge.shipping_address.postcode = jQuery(billing_postcode).val();
-                });
-
-                // set country
-                jQuery(billing_country).change(function () {
-                    zipmoney_meta.charge.billing_address.country = jQuery(billing_country).val();
-                    zipmoney_meta.charge.shipping_address.country = jQuery(billing_country).val();
-                });
-
-                // set city
-                jQuery(billing_city).change(function () {
-                    zipmoney_meta.charge.billing_address.city = jQuery(billing_city).val();
-                    zipmoney_meta.charge.shipping_address.city = jQuery(billing_city).val();
-                });
-
-                // set state
-                jQuery(billing_state).change(function () {
-                    zipmoney_meta.charge.billing_address.state = jQuery(billing_state).val();
-                    zipmoney_meta.charge.shipping_address.state = jQuery(billing_state).val();
-                });
-
-                jQuery('body').on('click', '#zip-money-button', function () {
-                    var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton('#zip-money-span', '<?php echo $this->public_key; ?>', '<?php echo $this->zip_money_gateway_id; ?>');
+                    };
 
                     // check if some meta is empty
                     jQuery.each(zipmoney_meta, function(k, v) {
                         if(v===""){
-                            // TODO: validate
-                            throw new Error("Something went badly wrong!");
+                            jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                            throw new Error("Validation error!");
+                        } else {
+                            // zipmoney_meta - json object
+                            paydock_zipmoney.setMeta(zipmoney_meta);
                         }
                     });
+                });
 
-                    paydock_zipmoney.setMeta(zipmoney_meta);
+                paydock_zipmoney.on('error', function (data) {
+                    alert('Error! Something went wrong');
+                    // work with troubles
+                    jQuery('.checkout-overlay.display').remove();
+                });
 
-                    jQuery('#zip-money-span').trigger('click');
+                paydock_zipmoney.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
 
-                    paydock_zipmoney.on('error', function (data) {
-                        alert('Error! Something went wrong');
-                        // work with troubles
-                        jQuery('.checkout-overlay.display').remove();
-                    });
-
-                    paydock_zipmoney.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
-
-                    paydock_zipmoney.on('finish', function (data) {
-                        console.log('on:finish', data);
-
-                        jQuery('input[name="paydock_gateway"]').val('zip_money');
-                        jQuery('input[name=woocommerce_checkout_place_order]').submit();
-                    });
+                paydock_zipmoney.on('finish', function (data) {
+                    jQuery('input[name="paydock_gateway"]').val('zip_money');
+                    jQuery('input[name=woocommerce_checkout_place_order]').submit();
                 });
             </script>
 			<?php
@@ -406,10 +347,14 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
             <script>
                 var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
                 paydock_paypal.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
+
+                paydock_paypal.on('click', function () {
+                   jQuery('#paydock-tab3').trigger('click');
+                });
+
                 paydock_paypal.on('finish', function (data) {
                     jQuery('input[name="paydock_gateway"]').val('paypal_express');
                     jQuery('input[name=woocommerce_checkout_place_order]').submit();
-                    console.log('on:finish', data);
                 });
             </script>
 			<?php
@@ -420,11 +365,14 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 */
 		public function credit_card_form() {
 			?>
-            <style>iframe {
+            <style>
+                iframe {
                     border: 0;
                     width: 100%;
                     height: 300px;
-                }</style>
+                    z-index: 1;
+                }
+            </style>
             <div id="paydock_cc"></div>
 			<?php
 		}
@@ -434,11 +382,14 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 */
 		public function direct_debit_form() {
 			?>
-            <style>iframe {
+            <style>
+                iframe {
                     border: 0;
                     width: 100%;
                     height: 300px;
-                }</style>
+                    z-index: 1;
+                }
+            </style>
             <div id="paydock_dd"></div>
 			<?php
 		}
