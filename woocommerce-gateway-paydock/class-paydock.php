@@ -49,7 +49,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
 			$this->zip_money              = trim( $this->settings['zip_money'] );
 			$this->zip_money_gateway_id   = trim( $this->settings['zip_money_gateway_id'] );
-			$this->zip_money_tokenization = trim( $this->settings['zip_money_tokenization'] );
+			$this->zip_money_tokenization = $this->settings['zip_money_tokenization'];
 
 			if ( $this->credit_card != 'no' ) {
 				$this->gateways['credit_card'] = true;
@@ -165,6 +165,17 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		}
 
 		/**
+		 * Get zipmoney tokenization
+         */
+		function get_zip_money_tokenization() {
+		    if ( $this->zip_money_tokenization == 'no' ) {
+		        return false;
+            } else {
+		        return true;
+            }
+        }
+
+		/**
 		 * Print gateway tabs in Checkout page
 		 */
 		public function tabs() {
@@ -179,44 +190,44 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php endif; ?>
 
                     <!-- active paydock-tab on page load gets checked attribute -->
-					<?php if ( $this->gateways['credit_card'] ) : ?>
+					<?php if ( ! empty( $this->gateways['credit_card'] ) ) : ?>
                         <input type="radio" data-gateway="credit_card" id="paydock-tab1" name="paydock-tabGroup1"
                                class="paydock-tab" checked>
                         <label for="paydock-tab1"><?php _e( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ); ?></label>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['direct_debit'] ) : ?>
+					<?php if ( ! empty( $this->gateways['direct_debit'] ) ) : ?>
                         <input type="radio" data-gateway="direct_debit" id="paydock-tab2" name="paydock-tabGroup1"
                                class="paydock-tab">
                         <label for="paydock-tab2"><?php _e( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ); ?></label>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['paypal_express'] ) : ?>
+					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <input type="radio" data-gateway="paypal_express" id="paydock-tab3" name="paydock-tabGroup1"
                                class="paydock-tab">
                         <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['zip_money'] && $this->is_zipmoney_available( WC()->cart->get_customer()->get_shipping_country() ) ) : ?>
+					<?php if ( ! empty( $this->gateways['zip_money'] ) && $this->is_zipmoney_available( WC()->cart->get_customer()->get_shipping_country() ) ) : ?>
                         <input type="radio" data-gateway="zip_money" id="paydock-tab4" name="paydock-tabGroup1"
                                class="paydock-tab">
                         <label for="paydock-tab4"><?php $this->zip_money_express_button(); ?></label>
 					<?php endif; ?>
 
                     <!-- Tabs content -->
-					<?php if ( $this->gateways['credit_card'] ) : ?>
+					<?php if ( ! empty( $this->gateways['credit_card'] ) ) : ?>
                         <div class="paydock-tab__content">
-							<?php $this->credit_card_form(); ?>
+							<?php $this->credit_card_form( $args = array(), $fields = array() ); ?>
                         </div>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['direct_debit'] ) : ?>
+					<?php if ( ! empty( $this->gateways['direct_debit'] ) ) : ?>
                         <div class="paydock-tab__content">
 							<?php $this->direct_debit_form(); ?>
                         </div>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['paypal_express'] ) : ?>
+					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
                                 <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
@@ -226,7 +237,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                         </div>
 					<?php endif; ?>
 
-					<?php if ( $this->gateways['zip_money'] ) : ?>
+					<?php if ( ! empty( $this->gateways['zip_money'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
                                 <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
@@ -248,13 +259,9 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 * ZipMoney Checkout Button for ZipMoney tab
 		 */
 		public function zip_money_express_button() {
-			$tokenize = true;
-
-			if ( $this->zip_money_tokenization == 'no' ) {
-				$tokenize = false;
-			}
-			?>
-            <button type="button" id="zip-money-button"><?php echo $tokenize; ?>
+		    $tokenize = $this->get_zip_money_tokenization();
+            ?>
+            <button type="button" id="zip-money-button">
                 <img src="<?php echo plugins_url( 'woocommerce-gateway-paydock/assets/images/zipmoney.png' ); ?>"
                      align="left" style="margin-right:7px;">
             </button>
@@ -276,7 +283,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     jQuery("#paydock-tab4").trigger("click");
 
                     var zipmoney_meta = {
-                        "tokenize":false,
+                        "tokenize":<?php echo ( $tokenize == false ? 'false' : 'true' ); ?>,
                         "first_name":jQuery(billing_first_name).val(),
                         "last_name":jQuery(billing_last_name).val(),
                         "email":jQuery(billing_email).val(),
@@ -363,7 +370,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		/**
 		 * Credit Card Form in Credit Card tabs
 		 */
-		public function credit_card_form() {
+		public function credit_card_form( $args = array(), $fields = array() ) {
 			?>
             <style>
                 iframe {
