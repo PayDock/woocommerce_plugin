@@ -230,9 +230,9 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Pay order in modal window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'If payment was successful you will redirect', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Finalise the checkout in the popup window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Once successful your order be submitted', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -240,9 +240,9 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['zip_money'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e( 'Click to tab button', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Pay order in modal window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'If payment was successful you will redirect', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Finalise the checkout in the popup window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Once successful your order be submitted', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -347,7 +347,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		public function paypal_express_button() {
 			?>
             <button type="button" id="paydock-paypal-express">
-                <img src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="left"
+                <img src="https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-pill-paypal-26px.png" align="left"
                      style="margin-right:7px;">
             </button>
 

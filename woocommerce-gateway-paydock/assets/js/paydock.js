@@ -1,5 +1,5 @@
 jQuery('body').on('click', '#place_order', function (e) {
-    if ( jQuery('.woocommerce-checkout').find('#payment_method_paydock').attr('checked') == 'checked' ) {
+    if (jQuery('.woocommerce-checkout').find('#payment_method_paydock').attr('checked') == 'checked') {
         e.preventDefault();
 
         jQuery('html, body').animate({
@@ -21,24 +21,31 @@ jQuery('body').on('click', '#place_order', function (e) {
             case 'zip_money':
                 jQuery('#zip-money-button').trigger('click');
                 break;
-            default: return '';
+            default:
+                return '';
         }
     }
 });
 
-if(paydock_object.gateways.creditCard == 'yes') {
+if (paydock_object.gateways.creditCard == 'yes') {
     // Paydock Credit Card gateway
     var paydock_cc = new paydock.HtmlWidget('#paydock_cc', paydock_object.publicKey, paydock_object.creditGatewayId);
 
-    if(paydock_object.sandbox == true) {
+    if (paydock_object.sandbox == true) {
         paydock_cc.setEnv('sandbox');
     }
 
-    if(paydock_object.cc_email == true) {
+    if (paydock_object.cc_email == true) {
         paydock_cc.setFormFields(['email']);
     }
 
+    paydock_cc.interceptSubmitForm('#paydock_cc');
+
     paydock_cc.onFinishInsert('input[name="payment_source"]', 'payment_source');
+
+    paydock_cc.setStyles({
+        font_size: '13px'
+    });
 
     paydock_cc.on('finish', function (data) {
         jQuery('input[name="paydock_gateway"]').val('credit_card');
@@ -49,14 +56,20 @@ if(paydock_object.gateways.creditCard == 'yes') {
     paydock_cc.load();
 }
 
-if(paydock_object.gateways.directDebit == 'yes') {
+if (paydock_object.gateways.directDebit == 'yes') {
     // Paydock Direct Debit gateway
     var paydock_dd = new paydock.HtmlWidget('#paydock_dd', paydock_object.publicKey, paydock_object.debitGatewayId, 'bank_account');
-    if(paydock_object.sandbox == true) {
+    if (paydock_object.sandbox == true) {
         paydock_dd.setEnv('sandbox');
     }
 
+    paydock_dd.setStyles({
+        font_size: '13px'
+    });
+
     paydock_dd.setFormFields(['account_bsb']);
+
+    paydock_dd.interceptSubmitForm('#paydock_dd');
 
     paydock_dd.onFinishInsert('input[name="payment_source"]', 'payment_source');
 
