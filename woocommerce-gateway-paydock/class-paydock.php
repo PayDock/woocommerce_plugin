@@ -166,14 +166,14 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
 		/**
 		 * Get zipmoney tokenization
-         */
+		 */
 		function get_zip_money_tokenization() {
-		    if ( $this->zip_money_tokenization == 'no' ) {
-		        return false;
-            } else {
-		        return true;
-            }
-        }
+			if ( $this->zip_money_tokenization == 'no' ) {
+				return false;
+			} else {
+				return true;
+			}
+		}
 
 		/**
 		 * Print gateway tabs in Checkout page
@@ -205,13 +205,15 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <input type="radio" data-gateway="paypal_express" id="paydock-tab3" name="paydock-tabGroup1"
                                class="paydock-tab">
-                        <label for="paydock-tab3"><?php $this->paypal_express_button(); ?></label>
+                        <label for="paydock-tab3"
+                               class="paypal-express-tab"><?php $this->paypal_express_button(); ?></label>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $this->gateways['zip_money'] ) && $this->is_zipmoney_available( WC()->cart->get_customer()->get_shipping_country() ) ) : ?>
                         <input type="radio" data-gateway="zip_money" id="paydock-tab4" name="paydock-tabGroup1"
                                class="paydock-tab">
-                        <label for="paydock-tab4"><?php $this->zip_money_express_button(); ?></label>
+                        <label for="paydock-tab4"
+                               class="zip-money-tab"><?php $this->zip_money_express_button(); ?></label>
 					<?php endif; ?>
 
                     <!-- Tabs content -->
@@ -231,8 +233,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                         <div class="paydock-tab__content">
                             <ol>
                                 <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Finalise the checkout in the popup window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Once successful your order be submitted', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -241,8 +242,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                         <div class="paydock-tab__content">
                             <ol>
                                 <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Finalise the checkout in the popup window', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Once successful your order be submitted', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -259,8 +259,8 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 * ZipMoney Checkout Button for ZipMoney tab
 		 */
 		public function zip_money_express_button() {
-		    $tokenize = $this->get_zip_money_tokenization();
-            ?>
+			$tokenize = $this->get_zip_money_tokenization();
+			?>
             <button type="button" id="zip-money-button">
                 <img src="<?php echo plugins_url( 'woocommerce-gateway-paydock/assets/images/zipmoney.png' ); ?>"
                      align="left" style="margin-right:7px;">
@@ -279,43 +279,43 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
                 var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton('#zip-money-button', '<?php echo $this->public_key; ?>', '<?php echo $this->zip_money_gateway_id; ?>');
 
-                paydock_zipmoney.on('click', function(){
+                paydock_zipmoney.on('click', function () {
                     jQuery("#paydock-tab4").trigger("click");
 
                     var zipmoney_meta = {
-                        "tokenize":<?php echo ( $tokenize == false ? 'false' : 'true' ); ?>,
-                        "first_name":jQuery(billing_first_name).val(),
-                        "last_name":jQuery(billing_last_name).val(),
-                        "email":jQuery(billing_email).val(),
+                        "tokenize":<?php echo( $tokenize == false ? 'false' : 'true' ); ?>,
+                        "first_name": jQuery(billing_first_name).val(),
+                        "last_name": jQuery(billing_last_name).val(),
+                        "email": jQuery(billing_email).val(),
                         "charge": {
                             "amount": "<?php echo WC()->cart->get_cart_contents_total(); ?>",
                             "currency": "<?php echo get_woocommerce_currency(); ?>",
-                            "shipping_address":{
-                                "first_name":jQuery(billing_first_name).val(),
-                                "last_name":jQuery(billing_last_name).val(),
-                                "line1":jQuery(billing_address_1).val(),
-                                "line2":jQuery(billing_address_2).val(),
-                                "country":jQuery(billing_country).val(),
-                                "postcode":jQuery(billing_postcode).val(),
-                                "city":jQuery(billing_city).val(),
-                                "state":jQuery(billing_state).val()
+                            "shipping_address": {
+                                "first_name": jQuery(billing_first_name).val(),
+                                "last_name": jQuery(billing_last_name).val(),
+                                "line1": jQuery(billing_address_1).val(),
+                                "line2": jQuery(billing_address_2).val(),
+                                "country": jQuery(billing_country).val(),
+                                "postcode": jQuery(billing_postcode).val(),
+                                "city": jQuery(billing_city).val(),
+                                "state": jQuery(billing_state).val()
                             },
-                            "billing_address":{
-                                "first_name":jQuery(billing_first_name).val(),
-                                "last_name":jQuery(billing_last_name).val(),
-                                "line1":jQuery(billing_address_1).val(),
-                                "line2":jQuery(billing_address_2).val(),
-                                "country":jQuery(billing_country).val(),
-                                "postcode":jQuery(billing_postcode).val(),
-                                "city":jQuery(billing_city).val(),
-                                "state":jQuery(billing_state).val()
+                            "billing_address": {
+                                "first_name": jQuery(billing_first_name).val(),
+                                "last_name": jQuery(billing_last_name).val(),
+                                "line1": jQuery(billing_address_1).val(),
+                                "line2": jQuery(billing_address_2).val(),
+                                "country": jQuery(billing_country).val(),
+                                "postcode": jQuery(billing_postcode).val(),
+                                "city": jQuery(billing_city).val(),
+                                "state": jQuery(billing_state).val()
                             }
                         }
                     };
 
                     // check if some meta is empty
-                    jQuery.each(zipmoney_meta, function(k, v) {
-                        if(v===""){
+                    jQuery.each(zipmoney_meta, function (k, v) {
+                        if (v === "") {
                             jQuery('input[name=woocommerce_checkout_place_order]').submit();
                             throw new Error("Validation error!");
                         } else {
@@ -347,7 +347,8 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		public function paypal_express_button() {
 			?>
             <button type="button" id="paydock-paypal-express">
-                <img src="https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-pill-paypal-26px.png" align="left"
+                <img src="https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-pill-paypal-26px.png"
+                     align="left"
                      style="margin-right:7px;">
             </button>
 
@@ -355,8 +356,34 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                 var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
                 paydock_paypal.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
 
+				<?php
+				$items = WC()->cart->get_cart();
+				$virtual_counter = 0;
+				$physical_counter = 0;
+
+				foreach ( $items as $item ) {
+					$product = wc_get_product( $item['product_id'] );
+
+					if ( $product->is_virtual() || $product->is_downloadable() ) {
+						$virtual_counter ++;
+					} else {
+						$physical_counter ++;
+					}
+				}
+
+				if ( $virtual_counter >= $physical_counter ) {
+				?>
+                var paypal_meta = {
+                    "hide_shipping_address": "true"
+                };
+
+                paydock_paypal.setMeta(paypal_meta);
+				<?php
+				}
+				?>
+
                 paydock_paypal.on('click', function () {
-                   jQuery('#paydock-tab3').trigger('click');
+                    jQuery('#paydock-tab3').trigger('click');
                 });
 
                 paydock_paypal.on('finish', function (data) {
