@@ -4,7 +4,7 @@ Plugin Name: Woocommerce Gateway PayDock
 Plugin URI:
 Description: WooCommerce Gateway PayDock
 Author:
-Version: 1.1.0
+Version: 1.1.1
 Author URI:
 */
 
