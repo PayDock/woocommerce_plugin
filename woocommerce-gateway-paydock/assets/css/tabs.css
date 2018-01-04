@@ -11,7 +11,7 @@
     position: relative;
     list-style: none;
     background-color: #fff;
-    margin: 40px 0;
+    margin: 4px 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
@@ -21,6 +21,7 @@
 
 .paydock-tab {
     display: none;
+    
 }
 
 .paydock-tab:checked:nth-of-type(1) ~ .paydock-tab__content:nth-of-type(1) {
@@ -84,7 +85,7 @@
     transition: 0.5s opacity ease-in, 0.8s transform ease;
     transition: 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
     position: relative;
-    top: 0;
+    top: 10px;
     z-index: 1;
     -webkit-transform: translateY(0px);
     transform: translateY(0px);
@@ -101,16 +102,15 @@
 }
 
 .paydock-tab:last-of-type:not(:first-of-type) + label {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 
 .paydock-tab:checked + label {
     background-color: #fff;
-    border: 1px solid #c2c2c2;
-    border-left: 0;
-    border-bottom: 0;
-    box-shadow: 0 -1px 0 #fff inset;
+    border: 2px solid #5C5C5C;
+    border-top: 2px solid #5C5C5C;
+    border-bottom: 2px solid #5C5C5C;
     cursor: default;
 }
 
@@ -125,7 +125,7 @@
     justify-content: center;
     box-shadow: 0 -1px 0 #eee inset;
     border: 1px solid #b5b5b5;
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0px 0px;
     cursor: pointer;
     text-decoration: none;
     color: #333;
@@ -174,7 +174,7 @@
 }
 
 label[for=paydock-tab3] {
-    padding: 7px 0 10px;
+    margin:auto
 }
 
 #paydock-paypal-express {
@@ -182,8 +182,12 @@ label[for=paydock-tab3] {
     padding: 0;
 }
 
+#paydock-paypal-express img{
+    height: 25px;
+}
+
 label[for=paydock-tab4] {
-    padding: 10px 15px 20px;
+    margin: auto;
 }
 
 #zip-money-button {
@@ -192,5 +196,5 @@ label[for=paydock-tab4] {
 }
 
 #zip-money-button img {
-    height: 25px;
+    height: 20px;
 }
