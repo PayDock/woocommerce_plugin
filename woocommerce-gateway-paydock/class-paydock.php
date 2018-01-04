@@ -11,7 +11,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 */
 		public function __construct() {
 			$this->currency_list = array( 'AUD', 'USD', 'GBP', 'EUR', 'JPY', 'CAD', 'CHF', 'NZD' );
-			$this->js_ver        = '1.0.2';
+			$this->js_ver        = '1.0.3';
 			$this->method_title  = 'PayDock';
 			$this->id            = 'paydock';
 			$this->has_fields    = true;

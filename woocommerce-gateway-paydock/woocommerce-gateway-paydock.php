@@ -31,7 +31,7 @@ if ( ! function_exists( 'is_woocommerce_active' ) ) {
 if ( is_woocommerce_active() ) {
 
     //current plugin version
-    define( 'WOOPAYDOCK_VER', '1.1.0' );
+    define( 'WOOPAYDOCK_VER', '1.1.1' );
 
     // The text domain for strings localization
     define( 'WOOPAYDOCKTEXTDOMAIN', 'woocommerce-gateway-paydock' );
