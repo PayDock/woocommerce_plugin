@@ -151,7 +151,7 @@
 }
 
 .paydock-tab__content {
-    padding: 10px 25px;
+    padding: 40px 25px;
     background-color: transparent;
     position: absolute;
     width: 100%;
@@ -161,6 +161,10 @@
     -webkit-transform: translateY(-3px);
     transform: translateY(-3px);
     border-radius: 6px;
+}
+
+.paydock-tab__content li::before {
+    position: absolute;
 }
 
 .paydock {

@@ -11,7 +11,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		 */
 		public function __construct() {
 			$this->currency_list = array( 'AUD', 'USD', 'GBP', 'EUR', 'JPY', 'CAD', 'CHF', 'NZD' );
-			$this->js_ver        = '1.0.3';
+			$this->js_ver        = '1.0.5';
 			$this->method_title  = 'PayDock';
 			$this->id            = 'paydock';
 			$this->has_fields    = true;
@@ -232,8 +232,8 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e('Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e('Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
