@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Gateway PayDock
 Plugin URI: https://github.com/PayDockDev/woocommerce_plugin
 Description: WooCommerce Gateway PayDock
 Author: Mark Cardamis
-Version: 1.3.0
+Version: 1.4.0
 Author URI: 
 */
 
@@ -31,7 +31,7 @@ if ( ! function_exists( 'is_woocommerce_active' ) ) {
 if ( is_woocommerce_active() ) {
 
     //current plugin version
-    define( 'WOOPAYDOCK_VER', '1.3.0' );
+    define( 'WOOPAYDOCK_VER', '1.4.0' );
 
     // The text domain for strings localization
     define( 'WOOPAYDOCKTEXTDOMAIN', 'woocommerce-gateway-paydock' );
