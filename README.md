@@ -1,6 +1,7 @@
-=== Plugin Name ===
+=== PayDock for WooCommerce ===
 Contributors: markcardamis
-Tags: comments, spam
+Tags: paydock, gateways, payment gateways
+Requires PHP: 5.6
 Requires at least: 4.6
 Tested up to: 4.9.1
 Stable tag: 1.3.0
