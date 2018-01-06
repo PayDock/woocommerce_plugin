@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: WooCommerce Gateway PayDock
+Plugin Name: PayDock for WooCommerce
 Plugin URI: https://github.com/PayDockDev/woocommerce_plugin
-Description: WooCommerce Gateway PayDock
+Description: PayDock for WooCommerce
 Author: Mark Cardamis
 Version: 1.4.0
 Author URI: 

@@ -1,10 +1,12 @@
-=== PayDock for WooCommerce ===
+=== PayDock for WooCommerce === 
+
 Contributors: markcardamis
-Tags: paydock, gateways, payment gateways
+Donate link: https://paydock.com/
+Tags: paydock, gateways, payment gateways, woocommerce, payment gateway, credit card, direct payment
 Requires PHP: 5.6
 Requires at least: 4.6
 Tested up to: 4.9.1
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -46,5 +48,5 @@ Contact sales@paydock.com to get a production billing account.
 
 == Changelog ==
 
-= 1.3.0 =
+= 1.4.0 =
 * First release on the plugins store
