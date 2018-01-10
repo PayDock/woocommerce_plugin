@@ -56,21 +56,15 @@ if ( is_woocommerce_active() ) {
              **/
             function __construct() {
 
+
                 //setup proper directories
-                if ( is_multisite() && defined( 'WPMU_PLUGIN_URL' ) && defined( 'WPMU_PLUGIN_DIR' ) && file_exists( WPMU_PLUGIN_DIR . '/woocommerce-gateway-paydock.php' ) ) {
-                    $this->plugin_dir = WPMU_PLUGIN_DIR . '/woocommerce-gateway-paydock/';
-                    $this->plugin_url = WPMU_PLUGIN_URL . '/woocommerce-gateway-paydock/';
-                } else if ( defined( 'WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/woocommerce-gateway-paydock/woocommerce-gateway-paydock.php' ) ) {
-                    $this->plugin_dir = WP_PLUGIN_DIR . '/woocommerce-gateway-paydock/';
-                    $this->plugin_url = WP_PLUGIN_URL . '/woocommerce-gateway-paydock/';
-                } else if ( defined('WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/woocommerce-gateway-paydock.php' ) ) {
-                    $this->plugin_dir = WP_PLUGIN_DIR;
-                    $this->plugin_url = WP_PLUGIN_URL;
-                }
+                $this->plugin_dir = dirname( __FILE__ ) . '/';
+                $this->plugin_url = str_replace( array( 'http:', 'https:' ), '', plugins_url( '', __FILE__ ) ) . '/';
 
-                register_activation_hook( $this->plugin_dir . 'woocommerce-gateway-paydock.php', array( &$this, 'activation' ) );
 
-                load_plugin_textdomain( WOOPAYDOCKTEXTDOMAIN, false, dirname( 'woocommerce-gateway-paydock/woocommerce-gateway-paydock.php' ) . '/languages/' );
+                register_activation_hook( __FILE__, array( &$this, 'activation' ) );
+
+                load_plugin_textdomain( WOOPAYDOCKTEXTDOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
                 add_filter( 'woocommerce_payment_gateways',  array( $this, 'add_gateways' ) );
             }
