@@ -1,6 +1,6 @@
 === PayDock for WooCommerce === 
 
-Contributors: markcardamis
+Contributors: paydock
 Donate link: https://paydock.com/
 Tags: paydock, gateways, payment gateways, woocommerce, payment gateway, credit card, direct payment
 Requires PHP: 5.6
