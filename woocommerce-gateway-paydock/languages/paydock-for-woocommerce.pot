@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Woocommerce-Gateway-Paydock\n"
+"Project-Id-Version: Paydock-For-Woocommerce\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-11 17:31+0200\n"
-"PO-Revision-Date: 2017-03-11 17:31+0200\n"
+"POT-Creation-Date: 2018-01-17 09:36+0200\n"
+"PO-Revision-Date: 2018-01-17 09:36+0200\n"
 "Last-Translator: admin <admin@poadminedt.etdi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,111 +16,166 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _e;__\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: e:\\woocommerce-gateway-paydock\n"
+"X-Poedit-SearchPath-0: e:\\paydock-for-woocommerce\n"
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:62
-msgid "Enable/Disable"
+#: e:\paydock-for-woocommerce/class-paydock.php:71
+msgid "Place order with PayDock"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:63
-msgid "Enable PayDock"
+#: e:\paydock-for-woocommerce/class-paydock.php:196
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:43
+msgid "Credit Card"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:69
-msgid "Title"
+#: e:\paydock-for-woocommerce/class-paydock.php:202
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:64
+msgid "Direct Debit"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:71
-msgid "Payment method title that the customer will see on your website."
+#: e:\paydock-for-woocommerce/class-paydock.php:235
+#: e:\paydock-for-woocommerce/class-paydock.php:244
+msgid "Click the payment method"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:72
-msgid "PayDock"
+#: e:\paydock-for-woocommerce/class-paydock.php:236
+#: e:\paydock-for-woocommerce/class-paydock.php:245
+msgid "Finalise checkout in the popup window to submit the order"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:76
-msgid "Description"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:78
-msgid "Payment method description that the customer will see on your checkout."
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:79
-msgid "Pay securely by Credit through PayDock Secure Servers."
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:83
-msgid "Production Secret Key"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:85
-#: e:\woocommerce-gateway-paydock/class-paydock.php:92
-#: e:\woocommerce-gateway-paydock/class-paydock.php:113
-#: e:\woocommerce-gateway-paydock/class-paydock.php:120
-msgid "Obtained from your PayDock account. You can set this key by logging into PayDock."
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:90
-msgid "Production Public Key"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:97
-msgid "Production Gateway ID"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:99
-#: e:\woocommerce-gateway-paydock/class-paydock.php:127
-msgid "Obtained from your PayDock account. You can set this ID by logging into PayDock."
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:104
-msgid "Use Sandbox"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:105
-msgid "Enable sandbox mode during testing and development - live payments will not be taken if enabled."
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:111
-msgid "Sandbox Secret Key"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:118
-msgid "Sandbox Public Key"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:125
-msgid "Sandbox Gateway ID"
-msgstr ""
-
-#: e:\woocommerce-gateway-paydock/class-paydock.php:202
+#: e:\paydock-for-woocommerce/class-paydock.php:451
 msgid "Note: Now PayDock working in Sandbox mode."
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:214
+#: e:\paydock-for-woocommerce/class-paydock.php:461
+msgid "Note: ZipMoney works only with \"AUD\" currency and for Australian customers."
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:472
 msgid "Note: PayDock support only next currencies:"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:238
+#: e:\paydock-for-woocommerce/class-paydock.php:496
 #, php-format
 msgid "Order %s from %s."
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:244
-msgid "The PayDoc Token was not generated correctly. Please go back and try again."
+#: e:\paydock-for-woocommerce/class-paydock.php:507
+msgid "(Credit Card)"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:293
+#: e:\paydock-for-woocommerce/class-paydock.php:510
+msgid "(Direct Debit)"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:513
+msgid "(Paypal Express)"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:516
+msgid "(Zip Money)"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:525
+msgid "The PayDock Token was not generated correctly. Please go back and try again."
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:565
+#, php-format
+msgid "%s Payment %s"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/class-paydock.php:583
 msgid "Unknown error"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/class-paydock.php:297
+#: e:\paydock-for-woocommerce/class-paydock.php:587
 msgid "Error:"
 msgstr ""
 
-#: e:\woocommerce-gateway-paydock/woocommerce-gateway-paydock.php:47
-#: e:\woocommerce-gateway-paydock/woocommerce-gateway-paydock.php:51
+#: e:\paydock-for-woocommerce/paydock-for-woocommerce.php:45
+#: e:\paydock-for-woocommerce/paydock-for-woocommerce.php:49
 msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:8
+msgid "Enable/Disable"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:9
+msgid "Enable PayDock"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:15
+msgid "Title"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:17
+msgid "Payment method title that the customer will see on your website."
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:18
+msgid "PayDock"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:22
+msgid "Use Sandbox"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:23
+msgid "Enable sandbox - live payments will not be taken if enabled."
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:29
+msgid "PayDock Public Key"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:31
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:38
+msgid "Obtained from your PayDock account. You can set this key by logging into PayDock."
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:36
+msgid "PayDock Secret Key"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:44
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:58
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:65
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:79
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:93
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:107
+msgid "Enable"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:51
+msgid "Credit Card Gateway ID"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:57
+msgid "Credit Card Email"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:72
+msgid "Direct Debit Gateway ID"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:78
+msgid "PayPal Express"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:86
+msgid "PayPal Express Gateway ID"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:92
+msgid "Zip Money"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:100
+msgid "Zip Money Gateway ID"
+msgstr ""
+
+#: e:\paydock-for-woocommerce/includes/settings-paydock.php:106
+msgid "Zip Money Tokenization"
 msgstr ""
 

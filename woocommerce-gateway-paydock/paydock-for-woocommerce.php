@@ -4,6 +4,7 @@ Plugin Name: PayDock for WooCommerce
 Plugin URI: https://github.com/PayDockDev/woocommerce_plugin
 Description: PayDock for WooCommerce
 Author: Mark Cardamis
+Text Domain: paydock-for-woocommerce
 Version: 1.4.0
 Author URI: 
 */
@@ -33,9 +34,6 @@ if ( is_woocommerce_active() ) {
     //current plugin version
     define( 'WOOPAYDOCK_VER', '1.4.0' );
 
-    // The text domain for strings localization
-    define( 'WOOPAYDOCKTEXTDOMAIN', 'woocommerce-gateway-paydock' );
-
     if ( !class_exists( 'WOOPAYDOCK' ) ) {
 
         class WOOPAYDOCK {
@@ -64,7 +62,7 @@ if ( is_woocommerce_active() ) {
 
                 register_activation_hook( __FILE__, array( &$this, 'activation' ) );
 
-                load_plugin_textdomain( WOOPAYDOCKTEXTDOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+                load_plugin_textdomain( 'paydock-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
                 add_filter( 'woocommerce_payment_gateways',  array( $this, 'add_gateways' ) );
             }

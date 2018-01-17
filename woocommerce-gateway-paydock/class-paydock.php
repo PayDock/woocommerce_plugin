@@ -68,7 +68,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			}
 
 			if ( $this->enabled ) {
-				$this->order_button_text = __( 'Place order with PayDock', WOOPAYDOCKTEXTDOMAIN );
+				$this->order_button_text = __( 'Place order with PayDock', 'paydock-for-woocommerce' );
 			}
 
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
@@ -193,13 +193,13 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['credit_card'] ) ) : ?>
                         <input type="radio" data-gateway="credit_card" id="paydock-tab1" name="paydock-tabGroup1"
                                class="paydock-tab" checked>
-                        <label for="paydock-tab1"><?php _e( 'Credit Card', WOOPAYDOCKTEXTDOMAIN ); ?></label>
+                        <label for="paydock-tab1"><?php _e( 'Credit Card', 'paydock-for-woocommerce' ); ?></label>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $this->gateways['direct_debit'] ) ) : ?>
                         <input type="radio" data-gateway="direct_debit" id="paydock-tab2" name="paydock-tabGroup1"
                                class="paydock-tab">
-                        <label for="paydock-tab2"><?php _e( 'Direct Debit', WOOPAYDOCKTEXTDOMAIN ); ?></label>
+                        <label for="paydock-tab2"><?php _e( 'Direct Debit', 'paydock-for-woocommerce' ); ?></label>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
@@ -232,8 +232,8 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e('Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e('Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e('Click the payment method', 'paydock-for-woocommerce' ); ?></li>
+                                <li><?php _e('Finalise checkout in the popup window to submit the order', 'paydock-for-woocommerce' ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -241,8 +241,8 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['zip_money'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e( 'Click the payment method', WOOPAYDOCKTEXTDOMAIN ); ?></li>
-                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', WOOPAYDOCKTEXTDOMAIN ); ?></li>
+                                <li><?php _e( 'Click the payment method', 'paydock-for-woocommerce' ); ?></li>
+                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', 'paydock-for-woocommerce' ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
@@ -448,7 +448,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
                 <div class="updated woocommerce-message">
                     <div class="squeezer">
-                        <h4><?php _e( 'Note: Now PayDock working in Sandbox mode.', WOOPAYDOCKTEXTDOMAIN ); ?></h4>
+                        <h4><?php _e( 'Note: Now PayDock working in Sandbox mode.', 'paydock-for-woocommerce' ); ?></h4>
                     </div>
                 </div>
 
@@ -458,7 +458,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			if ( $this->zip_money != 'no' ) { ?>
                 <div class="updated woocommerce-message">
                     <div class="squeezer">
-                        <h4><?php _e( 'Note: ZipMoney works only with "AUD" currency and for Australian customers.', WOOPAYDOCKTEXTDOMAIN ); ?></h4>
+                        <h4><?php _e( 'Note: ZipMoney works only with "AUD" currency and for Australian customers.', 'paydock-for-woocommerce' ); ?></h4>
                     </div>
                 </div>
 				<?php
@@ -469,7 +469,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                 <div class="error woocommerce-message">
                     <div class="squeezer">
                         <h4>
-							<?php echo __( 'Note: PayDock support only next currencies:', WOOPAYDOCKTEXTDOMAIN ) . ' ' . implode( ', ', $this->currency_list ) ?>
+							<?php echo __( 'Note: PayDock support only next currencies:', 'paydock-for-woocommerce' ) . ' ' . implode( ', ', $this->currency_list ) ?>
                         </h4>
                     </div>
                 </div>
@@ -493,7 +493,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		public function process_payment( $order_id, $retry = true, $force_customer = false ) {
 			$order = wc_get_order( $order_id );
 
-			$item_name = sprintf( __( 'Order %s from %s.', WOOPAYDOCKTEXTDOMAIN ), $order->get_order_number(), urlencode( remove_accents( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) );
+			$item_name = sprintf( __( 'Order %s from %s.', 'paydock-for-woocommerce' ), $order->get_order_number(), urlencode( remove_accents( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) );
 
 			try {
 				if ( isset( $_POST['payment_source'] ) ) {
@@ -504,16 +504,16 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
 				switch ( $_POST['paydock_gateway'] ) {
 					case 'credit_card':
-						$paydock_gateway = __( '(Credit Card)', WOOPAYDOCKTEXTDOMAIN );
+						$paydock_gateway = __( '(Credit Card)', 'paydock-for-woocommerce' );
 						break;
 					case 'direct_debit':
-						$paydock_gateway = __( '(Direct Debit)', WOOPAYDOCKTEXTDOMAIN );
+						$paydock_gateway = __( '(Direct Debit)', 'paydock-for-woocommerce' );
 						break;
 					case 'paypal_express':
-						$paydock_gateway = __( '(Paypal Express)', WOOPAYDOCKTEXTDOMAIN );
+						$paydock_gateway = __( '(Paypal Express)', 'paydock-for-woocommerce' );
 						break;
 					case 'zip_money':
-						$paydock_gateway = __( '(Zip Money)', WOOPAYDOCKTEXTDOMAIN );
+						$paydock_gateway = __( '(Zip Money)', 'paydock-for-woocommerce' );
 						break;
 					default:
 						$paydock_gateway = '';
@@ -522,7 +522,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
 				//make sure token is set at this point
 				if ( empty( $token ) ) {
-					throw new Exception( __( 'The PayDock Token was not generated correctly. Please go back and try again.', WOOPAYDOCKTEXTDOMAIN ) );
+					throw new Exception( __( 'The PayDock Token was not generated correctly. Please go back and try again.', 'paydock-for-woocommerce' ) );
 				}
 
 				$postfields = json_encode( array(
@@ -562,7 +562,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 						$correct_status = ( 'direct_debit' == $_POST['paydock_gateway'] ) ? 'requested' : 'complete';
 
 						if ( ! empty( $res['resource']['data']['status'] ) && $correct_status == $res['resource']['data']['status'] ) {
-							$order->set_payment_method_title( sprintf( __( '%s Payment %s', WOOPAYDOCKTEXTDOMAIN ), $this->method_title, $paydock_gateway ) );
+							$order->set_payment_method_title( sprintf( __( '%s Payment %s', 'paydock-for-woocommerce' ), $this->method_title, $paydock_gateway ) );
 							$order->payment_complete( $res['resource']['data']['_id'] );
 							// Remove cart
 							WC()->cart->empty_cart();
@@ -580,11 +580,11 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					}
 				}
 
-				throw new Exception( __( 'Unknown error', WOOPAYDOCKTEXTDOMAIN ) );
+				throw new Exception( __( 'Unknown error', 'paydock-for-woocommerce' ) );
 
 			} catch ( Exception $e ) {
 
-				wc_add_notice( __( 'Error:', WOOPAYDOCKTEXTDOMAIN ) . ' ' . $e->getMessage(), 'error' );
+				wc_add_notice( __( 'Error:', 'paydock-for-woocommerce' ) . ' ' . $e->getMessage(), 'error' );
 			}
 
 			return '';
