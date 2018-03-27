@@ -102,8 +102,8 @@
 }
 
 .paydock-tab:last-of-type:not(:first-of-type) + label {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .paydock-tab:checked + label {
@@ -125,7 +125,7 @@
     justify-content: center;
     box-shadow: 0 -1px 0 #eee inset;
     border: 1px solid #b5b5b5;
-    border-radius: 6px 6px 0px 0px;
+    border-radius: 6px 6px 0 0;
     cursor: pointer;
     text-decoration: none;
     color: #333;

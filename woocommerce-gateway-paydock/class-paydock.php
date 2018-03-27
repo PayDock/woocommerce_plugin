@@ -51,20 +51,30 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			$this->zip_money_gateway_id   = trim( $this->settings['zip_money_gateway_id'] );
 			$this->zip_money_tokenization = $this->settings['zip_money_tokenization'];
 
-			if ( $this->credit_card != 'no' ) {
+			if ( ! empty( $this->settings['afterpay'] ) ) {
+				$this->afterpay = trim( $this->settings['afterpay'] );
+			}
+
+			$this->afterpay_gateway_id = trim( $this->settings['afterpay_gateway_id'] );
+
+			if ( ! empty( $this->credit_card ) && $this->credit_card != 'no' ) {
 				$this->gateways['credit_card'] = true;
 			}
 
-			if ( $this->direct_debit != 'no' ) {
+			if ( ! empty( $this->direct_debit ) && $this->direct_debit != 'no' ) {
 				$this->gateways['direct_debit'] = true;
 			}
 
-			if ( $this->paypal_express != 'no' ) {
+			if ( ! empty( $this->paypal_express ) && $this->paypal_express != 'no' ) {
 				$this->gateways['paypal_express'] = true;
 			}
 
-			if ( $this->zip_money != 'no' ) {
+			if ( ! empty( $this->zip_money ) && $this->zip_money != 'no' ) {
 				$this->gateways['zip_money'] = true;
+			}
+
+			if ( ! empty( $this->afterpay ) && $this->afterpay != 'no' ) {
+				$this->gateways['afterpay'] = true;
 			}
 
 			if ( $this->enabled ) {
@@ -216,6 +226,13 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                                class="zip-money-tab"><?php $this->zip_money_express_button(); ?></label>
 					<?php endif; ?>
 
+					<?php if ( ! empty( $this->gateways['afterpay'] ) ) : ?>
+                        <input type="radio" data-gateway="afterpay" id="paydock-tab5" name="paydock-tabGroup1"
+                               class="paydock-tab">
+                        <label for="paydock-tab5"
+                               class="afterpay-tab"><?php $this->afterpay_button(); ?></label>
+					<?php endif; ?>
+
                     <!-- Tabs content -->
 					<?php if ( ! empty( $this->gateways['credit_card'] ) ) : ?>
                         <div class="paydock-tab__content">
@@ -232,13 +249,22 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					<?php if ( ! empty( $this->gateways['paypal_express'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
-                                <li><?php _e('Click the payment method', 'paydock-for-woocommerce' ); ?></li>
-                                <li><?php _e('Finalise checkout in the popup window to submit the order', 'paydock-for-woocommerce' ); ?></li>
+                                <li><?php _e( 'Click the payment method', 'paydock-for-woocommerce' ); ?></li>
+                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', 'paydock-for-woocommerce' ); ?></li>
                             </ol>
                         </div>
 					<?php endif; ?>
 
 					<?php if ( ! empty( $this->gateways['zip_money'] ) ) : ?>
+                        <div class="paydock-tab__content">
+                            <ol>
+                                <li><?php _e( 'Click the payment method', 'paydock-for-woocommerce' ); ?></li>
+                                <li><?php _e( 'Finalise checkout in the popup window to submit the order', 'paydock-for-woocommerce' ); ?></li>
+                            </ol>
+                        </div>
+					<?php endif; ?>
+
+					<?php if ( ! empty( $this->gateways['afterpay'] ) ) : ?>
                         <div class="paydock-tab__content">
                             <ol>
                                 <li><?php _e( 'Click the payment method', 'paydock-for-woocommerce' ); ?></li>
@@ -288,7 +314,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                         "last_name": jQuery(billing_last_name).val(),
                         "email": jQuery(billing_email).val(),
                         "charge": {
-                            "amount": "<?php echo WC()->cart->get_cart_contents_total(); ?>",
+                            "amount": "<?php echo WC()->cart->get_total( 'not_view' ); ?>",
                             "currency": "<?php echo get_woocommerce_currency(); ?>",
                             "shipping_address": {
                                 "first_name": jQuery(billing_first_name).val(),
@@ -335,7 +361,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
                 paydock_zipmoney.on('finish', function (data) {
                     jQuery('input[name="paydock_gateway"]').val('zip_money');
-                    jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                    jQuery('#place_order').submit();
                 });
             </script>
 			<?php
@@ -391,6 +417,80 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     jQuery('input[name=woocommerce_checkout_place_order]').submit();
                 });
             </script>
+			<?php
+		}
+
+		/**
+		 * Afterpay button in payment tabs
+		 */
+		public function afterpay_button() {
+			?>
+            <button type="button" id="afterpay-button">
+                <img src="https://daepxvbfwwgd0.cloudfront.net/assets/logo_scroll-0c43312c5845a0dcd7a3373325da6402bc1d635d3415af28ed40d6c1b48e3d5c.png"
+                     align="left" style="margin-right:7px;">
+            </button>
+
+            <script>
+                var afterpay_button = new paydock.AfterpayCheckoutButton('#afterpay-button', '<?php echo $this->public_key; ?>', '<?php echo $this->afterpay_gateway_id; ?>');
+
+                afterpay_button.on('click', function () {
+                    jQuery("#paydock-tab5").trigger("click");
+
+                    // woocommerce checkout form fields
+                    var billing_first_name = '#billing_first_name',
+                        billing_last_name = '#billing_last_name',
+                        billing_email = '#billing_email',
+                        billing_address_1 = '#billing_address_1',
+                        billing_address_2 = '#billing_address_2',
+                        billing_city = '#billing_city',
+                        billing_postcode = '#billing_postcode',
+                        billing_phone = '#billing_phone';
+
+                    var afterpay_meta = {
+                        "amount": "<?php echo WC()->cart->get_total( 'not_view' ); ?>",
+                        "currency": "<?php echo get_woocommerce_currency(); ?>",
+                        "brand_name": "Paydock",
+                        "reference": "15",
+                        "email": jQuery(billing_email).val(),
+                        "hdr_img": 'https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAy4AAAAJDFmZTk5ZjJjLTE0MWYtNDI5OS1hMmUwLWJhOTlhNzQ2MDFhZA.jpg',
+                        "logo_img": 'https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAy4AAAAJDFmZTk5ZjJjLTE0MWYtNDI5OS1hMmUwLWJhOTlhNzQ2MDFhZA.jpg',
+                        "first_name": jQuery(billing_first_name).val(),
+                        "last_name": jQuery(billing_last_name).val(),
+                        "address_line": jQuery(billing_address_1).val(),
+                        "address_line2": jQuery(billing_address_2).val(),
+                        "address_city": jQuery(billing_city).val(),
+                        "address_postcode": jQuery(billing_postcode).val(),
+                        "hide_shipping_address": "1",
+                        "phone": jQuery(billing_phone).val()
+                    };
+
+                    // check if some meta is empty
+                    jQuery.each(afterpay_meta, function (k, v) {
+                        if (v === "") {
+                            jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                            throw new Error("Validation error!");
+                        } else {
+                            // afterpay_meta - json object
+                            afterpay_button.setMeta(afterpay_meta);
+                        }
+                    });
+                });
+
+                afterpay_button.on('error', function (data) {
+                    alert('Error! Something went wrong');
+                    // work with troubles
+                    jQuery('.checkout-overlay.display').remove();
+                });
+
+                afterpay_button.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
+
+                afterpay_button.on('finish', function (data) {
+                    console.log('on:finish', data);
+                    jQuery('input[name="paydock_gateway"]').val('afterpay');
+                    jQuery('#place_order').submit();
+                });
+            </script>
+
 			<?php
 		}
 
@@ -514,6 +614,9 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 						break;
 					case 'zip_money':
 						$paydock_gateway = __( '(Zip Money)', 'paydock-for-woocommerce' );
+						break;
+					case 'afterpay':
+						$paydock_gateway = __( '(Afterpay)', 'paydock-for-woocommerce' );
 						break;
 					default:
 						$paydock_gateway = '';

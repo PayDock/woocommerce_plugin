@@ -109,6 +109,21 @@ $settings = array(
         'description' => '',
         'default'     => 'no'
     ),
+    'afterpay' => array(
+	    'title'       => __( 'AfterPay', 'paydock-for-woocommerce' ),
+	    'label'       => __( 'Enable', 'paydock-for-woocommerce' ),
+	    'type'        => 'checkbox',
+	    'class'       => 'gateway-checkbox',
+	    'description' => '',
+	    'default'     => 'no'
+    ),
+    'afterpay_gateway_id' => array(
+	    'title'       => __( 'AfterPay Gateway ID', 'paydock-for-woocommerce' ),
+	    'type'        => 'text',
+	    'default'     => '',
+	    'desc_tip'    => true
+    ),
+
 );
 
 return $settings;
