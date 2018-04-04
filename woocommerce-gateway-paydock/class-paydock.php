@@ -342,7 +342,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     // check if some meta is empty
                     jQuery.each(zipmoney_meta, function (k, v) {
                         if (v === "") {
-                            jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                            jQuery('#place_order').submit();
                             throw new Error("Validation error!");
                         } else {
                             // zipmoney_meta - json object
@@ -414,7 +414,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 
                 paydock_paypal.on('finish', function (data) {
                     jQuery('input[name="paydock_gateway"]').val('paypal_express');
-                    jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                    jQuery('#place_order').submit();
                 });
             </script>
 			<?php
@@ -426,7 +426,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		public function afterpay_button() {
 			?>
             <button type="button" id="afterpay-button">
-                <img src="https://daepxvbfwwgd0.cloudfront.net/assets/logo_scroll-0c43312c5845a0dcd7a3373325da6402bc1d635d3415af28ed40d6c1b48e3d5c.png"
+                <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'assets/images/afterpay.png'; ?>"
                      align="left" style="margin-right:7px;">
             </button>
 
@@ -467,7 +467,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     // check if some meta is empty
                     jQuery.each(afterpay_meta, function (k, v) {
                         if (v === "") {
-                            jQuery('input[name=woocommerce_checkout_place_order]').submit();
+                            jQuery('#place_order').submit();
                             throw new Error("Validation error!");
                         } else {
                             // afterpay_meta - json object

@@ -1,6 +1,8 @@
 jQuery(document).ready(function () {
-    jQuery('body').on('click', '#place_order', function (e) {
-        if (jQuery('.woocommerce-checkout').find('#payment_method_paydock').attr('checked') == 'checked') {
+    var body = jQuery('body');
+
+    body.on('click', '#place_order', function (e) {
+        if (jQuery('.woocommerce-checkout').find('#payment_method_paydock').attr('checked') === 'checked') {
             e.preventDefault();
 
             jQuery('html, body').animate({
@@ -22,29 +24,46 @@ jQuery(document).ready(function () {
                 case 'zip_money':
                     jQuery('#zip-money-button').trigger('click');
                     break;
+                case 'afterpay':
+                    jQuery('#afterpay-button').trigger('click');
+                    break;
                 default:
                     return '';
             }
         }
     });
 
-    jQuery('body').on('click', '.zip-money-tab', function (e) {
+    body.on('click', '.zip-money-tab', function (e) {
         jQuery(this).find('#zip-money-button').get(0).click();
     });
 
-    jQuery('body').on('click', '.paypal-express-tab', function (e) {
+    body.on('click', '.paypal-express-tab', function (e) {
         jQuery(this).find('#paydock-paypal-express').get(0).click();
     });
 
-    if (paydock_object.gateways.creditCard == 'yes') {
+    body.on('click', '.afterpay-tab', function (e) {
+        jQuery(this).find('#afterpay-button').get(0).click();
+    });
+
+    createPaydockCreditCard(paydock_object);
+    createPaydockDirectDebit(paydock_object);
+
+    body.on('updated_checkout', function () {
+        createPaydockCreditCard(paydock_object);
+        createPaydockDirectDebit(paydock_object);
+    });
+});
+
+var createPaydockCreditCard = function (paydock_object) {
+    if (paydock_object.gateways.creditCard === 'yes') {
         // Paydock Credit Card gateway
         var paydock_cc = new paydock.HtmlWidget('#paydock_cc', paydock_object.publicKey, paydock_object.creditGatewayId);
 
-        if (paydock_object.sandbox == true) {
+        if (paydock_object.sandbox === true) {
             paydock_cc.setEnv('sandbox');
         }
 
-        if (paydock_object.cc_email == true) {
+        if (paydock_object.cc_email === true) {
             paydock_cc.setFormFields(['email']);
         }
 
@@ -65,11 +84,13 @@ jQuery(document).ready(function () {
 
         paydock_cc.load();
     }
+};
 
-    if (paydock_object.gateways.directDebit == 'yes') {
+var createPaydockDirectDebit = function (paydock_object) {
+    if (paydock_object.gateways.directDebit === 'yes') {
         // Paydock Direct Debit gateway
         var paydock_dd = new paydock.HtmlWidget('#paydock_dd', paydock_object.publicKey, paydock_object.debitGatewayId, 'bank_account');
-        if (paydock_object.sandbox == true) {
+        if (paydock_object.sandbox === true) {
             paydock_dd.setEnv('sandbox');
         }
 
@@ -92,4 +113,4 @@ jQuery(document).ready(function () {
 
         paydock_dd.load();
     }
-});
+};

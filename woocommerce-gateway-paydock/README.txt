@@ -5,8 +5,8 @@ Donate link: https://paydock.com/
 Tags: paydock, gateways, payment gateways, woocommerce, payment gateway, credit card, direct payment
 Requires PHP: 5.6
 Requires at least: 4.6
-Tested up to: 4.9.1
-Stable tag: 1.5.1
+Tested up to: 4.9.5
+Stable tag: 1.5.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 

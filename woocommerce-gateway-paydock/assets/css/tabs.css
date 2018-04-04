@@ -194,7 +194,7 @@ label[for=paydock-tab4] {
     margin: auto;
 }
 
-#zip-money-button {
+#zip-money-button, #afterpay-button {
     padding: 0;
     background: rgba(0, 0, 0, 0);
 }

@@ -5,7 +5,7 @@ Plugin URI: https://github.com/PayDockDev/woocommerce_plugin
 Description: PayDock for WooCommerce
 Author: Mark Cardamis
 Text Domain: paydock-for-woocommerce
-Version: 1.5.1
+Version: 1.5.2
 Author URI: 
 */
 
