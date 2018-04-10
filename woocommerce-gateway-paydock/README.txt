@@ -6,7 +6,7 @@ Tags: paydock, gateways, payment gateways, woocommerce, payment gateway, credit 
 Requires PHP: 5.6
 Requires at least: 4.6
 Tested up to: 4.9.5
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
