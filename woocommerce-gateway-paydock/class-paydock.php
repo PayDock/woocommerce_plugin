@@ -337,11 +337,11 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                                 "state": jQuery(billing_state).val()
                             }
                         }
-                    };
-
-                    // check if some meta is empty
+					};
+					
+                    // check if some meta is empty except address_line2
                     jQuery.each(zipmoney_meta, function (k, v) {
-                        if (v === "") {
+                        if (k !== "line2" && v === "") {
                             jQuery('#place_order').submit();
                             throw new Error("Validation error!");
                         } else {
@@ -464,9 +464,9 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                         "phone": jQuery(billing_phone).val()
                     };
 
-                    // check if some meta is empty
+                    // check if some meta is empty except address_line2
                     jQuery.each(afterpay_meta, function (k, v) {
-                        if (v === "") {
+                        if (k !== "address_line2" && v === "") {
                             jQuery('#place_order').submit();
                             throw new Error("Validation error!");
                         } else {
