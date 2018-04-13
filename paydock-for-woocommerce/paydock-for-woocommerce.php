@@ -32,7 +32,7 @@ if ( ! function_exists( 'is_woocommerce_active' ) ) {
 if ( is_woocommerce_active() ) {
 
     //current plugin version
-    define( 'WOOPAYDOCK_VER', '1.5.3' );
+    define( 'WOOPAYDOCK_VER', '1.5.4' );
 
     if ( !class_exists( 'WOOPAYDOCK' ) ) {
 
