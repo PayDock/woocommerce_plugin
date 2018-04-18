@@ -15,7 +15,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			$this->method_title  = 'PayDock';
 			$this->id            = 'paydock';
 			$this->has_fields    = true;
-			$this->icon          = $GLOBALS['woopaydock']->plugin_url . 'assets/images/logo.png';
+			$this->icon          = $GLOBALS['woopaydock']->plugin_url . 'admin/images/logo.png';
 
 			// Load the form fields.
 			$this->init_form_fields();
@@ -101,7 +101,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 				return;
 			}
 
-			wp_enqueue_script( 'admin-paydock-js', $GLOBALS['woopaydock']->plugin_url . 'assets/js/admin-paydock.js', array( 'jquery' ), WOOPAYDOCK_VER );
+			wp_enqueue_script( 'admin-paydock-js', $GLOBALS['woopaydock']->plugin_url . 'admin/js/admin-paydock.js', array( 'jquery' ), WOOPAYDOCK_VER );
 		}
 
 		/**
@@ -114,7 +114,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 				return '';
 			}
 
-			wp_enqueue_style( 'paydock-tabs', $GLOBALS['woopaydock']->plugin_url . 'assets/css/tabs.css', array(), WOOPAYDOCK_VER );
+			wp_enqueue_style( 'paydock-tabs', $GLOBALS['woopaydock']->plugin_url . 'admin/css/tabs.css', array(), WOOPAYDOCK_VER );
 
 			if ( 'sandbox' == $this->mode ) {
 				wp_enqueue_script( 'paydock-api', 'https://app-sandbox.paydock.com/v1/widget.umd.js', array(), $this->js_ver, true );
@@ -122,7 +122,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 				wp_enqueue_script( 'paydock-api', 'https://app.paydock.com/v1/widget.umd.min.js', array(), $this->js_ver, true );
 			}
 
-			wp_enqueue_script( 'paydock-js', $GLOBALS['woopaydock']->plugin_url . 'assets/js/paydock.js', array( 'paydock-api' ), time(), true );
+			wp_enqueue_script( 'paydock-js', $GLOBALS['woopaydock']->plugin_url . 'admin/js/paydock.js', array( 'paydock-api' ), time(), true );
 			wp_localize_script( 'paydock-js', 'paydock_object', array(
 				'gateways'        => array(
 					'creditCard'  => $this->credit_card,
@@ -288,7 +288,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			$tokenize = $this->get_zip_money_tokenization();
 			?>
             <button type="button" id="zip-money-button">
-                <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'assets/images/zipmoney.png'; ?>"
+                <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'admin/images/zipmoney.png'; ?>"
                      align="left" style="margin-right:7px;">
             </button>
             <script>
@@ -426,7 +426,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 		public function afterpay_button() {
 			?>
             <button type="button" id="afterpay-button">
-                <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'assets/images/afterpay.png'; ?>"
+                <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'admin/images/afterpay.png'; ?>"
                      align="left" style="margin-right:7px;">
             </button>
 
