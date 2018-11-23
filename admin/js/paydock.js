@@ -7,6 +7,8 @@ jQuery(document).ready(function () {
 
         if (paydock_object.sandbox === true) {
             paydock_cc.setEnv('sandbox');
+        } else {
+            paydock_cc.setEnv('production');
         }
 
         if (paydock_object.cc_email === true) {
@@ -37,6 +39,8 @@ jQuery(document).ready(function () {
         var paydock_dd = new paydock.HtmlWidget('#paydock_dd', paydock_object.publicKey, paydock_object.debitGatewayId, 'bank_account');
         if (paydock_object.sandbox === true) {
             paydock_dd.setEnv('sandbox');
+        } else {
+            paydock_dd.setEnv('production');
         }
 
         paydock_dd.setStyles({

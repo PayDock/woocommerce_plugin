@@ -15,7 +15,7 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			$this->method_title  = 'PayDock';
 			$this->id            = 'paydock';
 			$this->has_fields    = true;
-			$this->icon          = $GLOBALS['woopaydock']->plugin_url . 'admin/images/logo.png';
+			$this->icon          = ''; /*$GLOBALS['woopaydock']->plugin_url . 'admin/images/logo.png'*/
 
 			// Load the form fields.
 			$this->init_form_fields();
