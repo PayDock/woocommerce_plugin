@@ -628,32 +628,32 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 					throw new Exception( __( 'The PayDock Token was not generated correctly. Please go back and try again.', 'paydock-for-woocommerce' ) );
 				}
 
-				$postfields = json_encode( array(
-					'amount'      => (float) $order->get_total(),
-					'currency'    => strtoupper( get_woocommerce_currency() ),
-					'token'       => $token,
-					'reference'   => $item_name,
-					'description' => $item_name,
-					'customer'    => array(
-						'first_name' => $order->get_billing_first_name(),
-						'last_name'  => $order->get_billing_last_name(),
-						'email'      => $order->get_billing_email(),
-						'phone'      => $order->get_billing_phone(),
-					),
-				) );
+                $customer_id = $this->createPaydockCustomer($order, $token, $item_name);
 
-				$args   = array(
-					'method'      => 'POST',
-					'timeout'     => 45,
-					'httpversion' => '1.0',
-					'blocking'    => true,
-					'sslverify'   => false,
-					'body'        => $postfields,
-					'headers'     => array(
-						'Content-Type'      => 'application/json',
-						'x-user-secret-key' => $this->secret_key,
-					),
-				);
+                $postfields = json_encode( array(
+                    'amount'        => (float)$order->get_total(),
+                    'currency'      => strtoupper( get_woocommerce_currency() ),
+                    'customer_id'   => $customer_id,
+                    'reference'     => $item_name,
+                    'description'   => "shop",
+                    'meta'          => array(
+                        'shop' => 1
+                    )
+                ));
+
+                $args   = array(
+                    'method'      => 'POST',
+                    'timeout'     => 45,
+                    'httpversion' => '1.0',
+                    'blocking'    => true,
+                    'sslverify'   => false,
+                    'body'        => $postfields,
+                    'headers'     => array(
+                        'Content-Type'      => 'application/json',
+                        'x-user-secret-key' => $this->secret_key,
+                    ),
+                );
+
 				$result = wp_remote_post( $this->api_endpoint . 'v1/charges', $args );
 
 				if ( ! empty( $result['body'] ) ) {
@@ -693,6 +693,37 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			return '';
 		}
 
+        private function createPaydockCustomer($order, $token, $item_name) {
+
+            $postfields = json_encode( array(
+                'amount'      => (float) $order->get_total(),
+                'currency'    => strtoupper( get_woocommerce_currency() ),
+                'token'       => $token,
+                'reference'   => $item_name,
+                'description' => $item_name
+            ) );
+
+            $args   = array(
+                'method'      => 'POST',
+                'timeout'     => 45,
+                'httpversion' => '1.0',
+                'blocking'    => true,
+                'sslverify'   => false,
+                'body'        => $postfields,
+                'headers'     => array(
+                    'Content-Type'      => 'application/json',
+                    'x-user-secret-key' => $this->secret_key,
+                ),
+            );
+
+            $customer = wp_remote_post( $this->api_endpoint . 'v1/customers', $args );
+            $cust = json_decode($customer['body'], true);
+
+            if (empty($cust['resource']['data']['_id']))
+                throw new Exception( $cust['error']['message'] );
+
+            return $cust['resource']['data']['_id'];
+        }
 		//class end
 	}
 }
