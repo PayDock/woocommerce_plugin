@@ -1,6 +1,17 @@
 jQuery(document).ready(function () {
     var body = jQuery('body');
 
+    //maping data
+    let requiredFilds = {
+        'billing_first_name' : 'first_name',
+        'billing_last_name'  : 'last_name',
+        'billing_state'  : 'address_state',
+        'billing_city': 'address_city',
+        'billing_postcode': 'address_postcode',
+        'billing_email': 'email',
+        'billing_country': 'address_country'
+    };
+
     if (paydock_object.gateways.creditCard === 'yes') {
         // Paydock Credit Card gateway
         var paydock_cc = new paydock.HtmlWidget('#paydock_cc', paydock_object.publicKey, paydock_object.creditGatewayId);
@@ -27,11 +38,37 @@ jQuery(document).ready(function () {
         paydock_cc.on('finish', function (data) {
             jQuery('input[name="paydock_gateway"]').val('credit_card');
             jQuery('#place_order').submit();
-            console.log('on:finish', data);
         });
 
         paydock_cc.load();
 
+
+        //set value "requiredFilds" in widget
+        Object.keys(requiredFilds).forEach(function(key) {
+            let _this = $("#" + key);
+            let data = [];
+
+            data[requiredFilds[key]] =  _this.val();
+            paydock_cc.setFormValues(data);
+
+            switch (_this.prop("tagName"))  {
+                case 'INPUT':
+                    _this.keyup( function(){
+                        let data = [];
+
+                        data[requiredFilds[key]] =  $(this).val() ;
+                        paydock_cc.setFormValues(data);
+                    });
+                    break;
+                case 'SELECT':
+                    _this.change( function(){
+                        let data = [];
+                        data[requiredFilds[key]] =  $(this).val() ;
+                        paydock_cc.setFormValues(data);
+                    });
+                    break;
+            }
+        });
     }
 
     if (paydock_object.gateways.directDebit === 'yes') {
@@ -57,7 +94,6 @@ jQuery(document).ready(function () {
         paydock_dd.on('finish', function (data) {
             jQuery('input[name="paydock_gateway"]').val('direct_debit');
             jQuery('#place_order').submit();
-            console.log('on:finish', data);
         });
 
         paydock_dd.load();
