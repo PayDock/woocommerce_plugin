@@ -5,6 +5,8 @@ if(paydock_object.gateways.creditCard == 'yes') {
 
     if(paydock_object.sandbox == true) {
         paydock_cc.setEnv('sandbox');
+    } else {
+        paydock_cc.setEnv('production');
     }
 
     if(paydock_object.cc_email == true) {
@@ -22,6 +24,8 @@ if(paydock_object.gateways.directDebit == 'yes') {
 
     if(paydock_object.sandbox == true) {
         paydock_dd.setEnv('sandbox');
+    } else {
+        paydock_cc.setEnv('production');
     }
 
     paydock_dd.onFinishInsert('input[name="debit_source_token"]', 'payment_source');

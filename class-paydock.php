@@ -303,7 +303,17 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                     billing_city = '#billing_city',
                     billing_state = '#billing_state';
 
-                var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton('#zip-money-button', '<?php echo $this->public_key; ?>', '<?php echo $this->zip_money_gateway_id; ?>');
+                var paydock_zipmoney = new paydock.ZipmoneyCheckoutButton(
+                    '#zip-money-button',
+                    '<?php echo $this->public_key; ?>',
+                    '<?php echo $this->zip_money_gateway_id; ?>'
+                );
+
+                <?php if ( 'sandbox' == $this->mode ) : ?>
+                    paydock_zipmoney.setEnv('sandbox');
+                <?php else : ?>
+                    paydock_zipmoney.setEnv('production');
+                <?php endif; ?>
 
                 paydock_zipmoney.on('click', function () {
                     jQuery("#paydock-tab4").trigger("click");
