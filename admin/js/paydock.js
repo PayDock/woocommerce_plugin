@@ -16,7 +16,7 @@ jQuery(document).ready(function () {
         // Paydock Credit Card gateway
         var paydock_cc = new paydock.HtmlWidget('#paydock_cc', paydock_object.publicKey, paydock_object.creditGatewayId);
 
-        if (paydock_object.sandbox === true) {
+        if (paydock_object.sandbox == true) {
             paydock_cc.setEnv('sandbox');
         } else {
             paydock_cc.setEnv('production');
@@ -45,7 +45,7 @@ jQuery(document).ready(function () {
 
         //set value "requiredFilds" in widget
         Object.keys(requiredFilds).forEach(function(key) {
-            let _this = $("#" + key);
+            let _this = jQuery("#" + key);
             let data = [];
 
             data[requiredFilds[key]] =  _this.val();
@@ -56,14 +56,14 @@ jQuery(document).ready(function () {
                     _this.keyup( function(){
                         let data = [];
 
-                        data[requiredFilds[key]] =  $(this).val() ;
+                        data[requiredFilds[key]] =  jQuery(this).val() ;
                         paydock_cc.setFormValues(data);
                     });
                     break;
                 case 'SELECT':
                     _this.change( function(){
                         let data = [];
-                        data[requiredFilds[key]] =  $(this).val() ;
+                        data[requiredFilds[key]] =  jQuery(this).val() ;
                         paydock_cc.setFormValues(data);
                     });
                     break;
@@ -74,7 +74,7 @@ jQuery(document).ready(function () {
     if (paydock_object.gateways.directDebit === 'yes') {
         // Paydock Direct Debit gateway
         var paydock_dd = new paydock.HtmlWidget('#paydock_dd', paydock_object.publicKey, paydock_object.debitGatewayId, 'bank_account');
-        if (paydock_object.sandbox === true) {
+        if (paydock_object.sandbox == true) {
             paydock_dd.setEnv('sandbox');
         } else {
             paydock_dd.setEnv('production');
