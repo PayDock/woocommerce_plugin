@@ -382,6 +382,12 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
                 var paydock_paypal = new paydock.CheckoutButton('#paydock-paypal-express', '<?php echo $this->public_key; ?>', '<?php echo $this->paypal_express_gateway_id ?>');
                 paydock_paypal.onFinishInsert('input[name="payment_source"]', 'payment_source_token');
 
+                <?php if ( 'sandbox' == $this->mode ) : ?>
+                    paydock_paypal.setEnv('sandbox');
+                <?php else : ?>
+                    paydock_paypal.setEnv('production');
+                <?php endif; ?>
+
 				<?php
 				$items = WC()->cart->get_cart();
 				$virtual_counter = 0;
@@ -427,11 +433,17 @@ if ( ! class_exists( 'WCPayDockGateway' ) ) {
 			?>
             <button type="button" id="afterpay-button">
                 <img src="<?php echo $GLOBALS['woopaydock']->plugin_url . 'admin/images/afterpay.png'; ?>"
-                     align="left" style="margin-right:7px;">
+                     align="left" style="margin-right:7px;"  width="100">
             </button>
 
             <script>
                 var afterpay_button = new paydock.AfterpayCheckoutButton('#afterpay-button', '<?php echo $this->public_key; ?>', '<?php echo $this->afterpay_gateway_id; ?>');
+
+                <?php if ( 'sandbox' == $this->mode ) : ?>
+                    afterpay_button.setEnv('sandbox');
+                <?php else : ?>
+                    afterpay_button.setEnv('production');
+                <?php endif;?>
 
                 afterpay_button.on('click', function () {
                     jQuery("#paydock-tab5").trigger("click");
