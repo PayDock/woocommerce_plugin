@@ -1,23 +1,19 @@
-=== PayDock for WooCommerce === 
-
+=== PayDock for WooCommerce ===
 Contributors: markcardamis
 Donate link: https://paydock.com/
 Tags: paydock, gateways, payment gateways, woocommerce, payment gateway, credit card, direct payment
 Requires PHP: 5.6
 Requires at least: 4.6
 Tested up to: 4.9.5
-Stable tag: 1.5.6
+Stable tag: 1.5.7
 License: MIT
 License URI: https://opensource.org/licenses/MIT
-
 Accept more payment methods via PayDock. Connect multiple payment gateways with a central interface to manage the transactions.
 
 == Description ==
 
 Accept more payment methods via PayDock. Connect multiple payment gateways with a central interface to manage the transactions.
-
 Use PayDock to add a payment gateway for Credit card, for Bank transfers, Paypal or even Buy now pay later gateways.
-
 For a full list of payment gateways we are connected to visit [PayDock](https://paydock.com/features/api/ "PayDock gateways")
 
 == Installation ==
@@ -31,15 +27,12 @@ For a full list of payment gateways we are connected to visit [PayDock](https://
 == Frequently Asked Questions ==
 
 = How do I get help using PayDock? =
-
 Contact support@paydock.com for help.
 
 = How do I set up a production account? =
-
 Contact sales@paydock.com to get a production billing account.
 
 == Screenshots ==
-
 1. This is the widget in the WooCommerce store
 2. Your admin panel to change the PayDock settings
 3. This is where you get you API keys from PayDock website
@@ -47,6 +40,11 @@ Contact sales@paydock.com to get a production billing account.
 5. How to make your first charge for the newly created gateway
 
 == Changelog ==
-
 = 1.4.0 =
 * First release on the plugins store
+= 1.5.7 =
+* Bug fixes
+
+== Upgrade Notice ==
+= 1.5.7 =
+This version includes bug fixes for issues related to PayPal payments
